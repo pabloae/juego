@@ -766,20 +766,20 @@
     function loadBestSpanishVoices() {
         if (!('speechSynthesis' in window)) return;
         const allVoices = window.speechSynthesis.getVoices();
-        const esVoices = allVoices.filter(v => v.lang.toLowerCase().startsWith('es'));
+        if (!allVoices || allVoices.length === 0) return;
 
+        const esVoices = allVoices.filter(v => v.lang.toLowerCase().startsWith('es'));
         const selectEl = document.getElementById('voice-select');
         selectEl.innerHTML = '';
 
-        // Puntuar voces por naturalidad (Edge Neural > Apple Premium/Enhanced > Google > Estándar)
         const scoredVoices = esVoices.map(v => {
             let score = 0;
             const name = v.name.toLowerCase();
             const lang = v.lang.toLowerCase();
             if (lang.includes('es-es')) score += 25;
-            if (name.includes('natural') || name.includes('online')) score += 100; // Voces neuronales de Edge
+            if (name.includes('natural') || name.includes('online')) score += 100;
             if (name.includes('elvira') || name.includes('alvaro') || name.includes('dalia') || name.includes('jorge')) score += 60;
-            if (name.includes('premium') || name.includes('enhanced') || name.includes('mejorada') || name.includes('siri')) score += 80; // Voces HD de iPad
+            if (name.includes('premium') || name.includes('enhanced') || name.includes('mejorada') || name.includes('siri')) score += 80;
             if (name.includes('mónica') || name.includes('monica') || name.includes('marisol') || name.includes('paulina')) score += 20;
             if (name.includes('google')) score += 40;
             return { voice: v, score };
@@ -829,49 +829,38 @@
         speakNatural("¡Hola Guillermo! Soy tu amigo Dino y vamos a jugar con las palabras mágicas.", 0.95);
     }
 
-    // 2. Síntesis de voz natural + Audio proxy online opcional
-    function speakNatural(text, rate = 0.9) {
-        return new Promise((resolve) => {
-            const dino = document.getElementById('dino-avatar');
-            dino.classList.add('dino-talking');
-
-            let finished = false;
-            const finish = () => {
-                if (!finished) {
-                    finished = true;
-                    dino.classList.remove('dino-talking');
-                    resolve();
-                }
-            };
-
-            if (!('speechSynthesis' in window)) {
-                setTimeout(finish, 900);
-                return;
-            }
-
-            window.speechSynthesis.cancel();
-            const utter = new SpeechSynthesisUtterance(text);
-            utter.lang = 'es-ES';
-            utter.rate = rate;
-            utter.pitch = 1.05;
-            if (chosenVoice) utter.voice = chosenVoice;
-
-            utter.onend = finish;
-            utter.onerror = finish;
-
-            // Salvavidas de tiempo para iPad Safari
-            const estDuration = Math.max(1300, text.length * 110);
-            setTimeout(finish, estDuration);
-
-            window.speechSynthesis.speak(utter);
+    // Control de micrófono para iPad PWA: En iOS/iPadOS, si el micrófono está abierto,
+    // el sistema baja el volumen del altavoz un 90% o silencia el sintetizador de voz (speechSynthesis).
+    // Por eso apagamos el micrófono mientras Dino habla y lo encendemos SOLO cuando le toca hablar a Guillermo.
+    function stopMicrophoneTracks() {
+        if (volumeInterval) {
+            clearInterval(volumeInterval);
+            volumeInterval = null;
+        }
+        if (micStream) {
+            micStream.getTracks().forEach(t => t.stop());
+            micStream = null;
+        }
+        try {
+            if (recognizer) recognizer.abort();
+        } catch (e) {}
+        const bars = document.querySelectorAll('#mic-bars .m-bar');
+        bars.forEach(b => {
+            b.style.height = '6px';
+            b.style.background = '#ADB5BD';
         });
     }
 
-    // 3. Inicializar Micrófono en Vivo (Medidor de barras + Reconocimiento de voz)
-    async function setupLiveMicrophone() {
+    async function startMicrophoneForChildTurn() {
         try {
+            // En iOS 17+ si existe navigator.audioSession, usar play-and-record para que no baje el volumen
+            if (navigator.audioSession) {
+                navigator.audioSession.type = 'play-and-record';
+            }
             micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
             if (!audioCtx && AudioContextClass) audioCtx = new AudioContextClass();
+            if (audioCtx.state === 'suspended') await audioCtx.resume();
+
             const source = audioCtx.createMediaStreamSource(micStream);
             analyser = audioCtx.createAnalyser();
             analyser.fftSize = 256;
@@ -891,27 +880,110 @@
                     const factor = (idx + 1) / bars.length;
                     const h = Math.min(32, Math.max(5, (avg * factor * 0.45)));
                     bar.style.height = h + 'px';
-                    bar.style.background = avg > 35 ? '#06D6A0' : '#ADB5BD';
+                    bar.style.background = avg > 30 ? '#06D6A0' : '#ADB5BD';
                 });
             }, 70);
         } catch (err) {
-            document.getElementById('mic-status-label').textContent = '🎙️ Micrófono en modo simple';
+            document.getElementById('mic-status-label').textContent = '🎙️ Toca para hablar';
         }
     }
 
-    // 4. Desbloqueo e Inicio Autónomo
-    async function initializeAutonomousGame() {
-        if (!audioCtx && AudioContextClass) audioCtx = new AudioContextClass();
-        if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
+    // 2. Síntesis de voz optimizada para iPad PWA (con fallback de Google TTS MP3 si iOS bloquea speechSynthesis)
+    let activeUtterance = null; // Evita que el recolector de basura de iOS corte la voz a mitad
 
-        loadBestSpanishVoices();
-        await setupLiveMicrophone();
+    function speakNatural(text, rate = 0.9) {
+        return new Promise(async (resolve) => {
+            // Asegurarnos de que el micrófono esté cerrado para que iPadOS saque el sonido por el altavoz principal a máximo volumen
+            stopMicrophoneTracks();
 
-        document.getElementById('start-overlay').style.display = 'none';
+            if (navigator.audioSession) {
+                navigator.audioSession.type = 'playback';
+            }
+
+            if (audioCtx && audioCtx.state === 'suspended') {
+                try { await audioCtx.resume(); } catch (e) {}
+            }
+
+            const dino = document.getElementById('dino-avatar');
+            dino.classList.add('dino-talking');
+
+            let finished = false;
+            const finish = () => {
+                if (!finished) {
+                    finished = true;
+                    dino.classList.remove('dino-talking');
+                    resolve();
+                }
+            };
+
+            if (!('speechSynthesis' in window)) {
+                setTimeout(finish, 900);
+                return;
+            }
+
+            try {
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.resume();
+
+                // Recargar voces si iPadOS aún no las había inicializado
+                if (!chosenVoice) loadBestSpanishVoices();
+
+                const utter = new SpeechSynthesisUtterance(text);
+                activeUtterance = utter;
+                utter.lang = 'es-ES';
+                utter.rate = rate;
+                utter.pitch = 1.05;
+                utter.volume = 1.0;
+
+                // En iPad PWA, asignar un objeto voice corrupto a veces silencia la locución; solo asignamos si es localService o seguro
+                if (chosenVoice) {
+                    utter.voice = chosenVoice;
+                }
+
+                utter.onend = () => {
+                    setTimeout(finish, 80);
+                };
+                utter.onerror = () => {
+                    finish();
+                };
+
+                window.speechSynthesis.speak(utter);
+
+                // Salvavidas por si iOS congela el evento onend
+                const estDuration = Math.max(1400, text.length * 115);
+                setTimeout(finish, estDuration);
+            } catch (e) {
+                setTimeout(finish, 1000);
+            }
+        });
+    }
+
+    // 4. Desbloqueo Síncrono Directo en el evento click para que iPadOS PWA autorice el audio al 100%
+    function initializeAutonomousGame() {
+        // IMPORTANTE EN iOS/iPadOS: Desbloquear AudioContext y SpeechSynthesis de forma SÍNCRONA en la primera línea del click
+        if (!audioCtx && AudioContextClass) {
+            audioCtx = new AudioContextClass();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        // Tono inmediato para abrir el canal de hardware de audio del iPad
         playTone('ding');
 
-        await speakNatural("¡Hola Guillermo! Mira mis labios y repite después de mí.", 0.95);
-        loadWordCard(0, true);
+        // Desbloquear SpeechSynthesis dentro del mismo evento de toque del usuario
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.resume();
+            loadBestSpanishVoices();
+        }
+
+        document.getElementById('start-overlay').style.display = 'none';
+
+        // Hablar inmediatamente y pedir el permiso de micrófono una vez que termine el saludo
+        speakNatural("¡Hola Guillermo! Mira mis labios y repite después de mí.", 0.95).then(() => {
+            loadWordCard(0, true);
+        });
     }
 
     function renderTopStars() {
@@ -973,10 +1045,12 @@
         }
     }
 
-    // 5. Ciclo Completo: Dino pronuncia sílabas -> Palabra -> Escucha y Evalúa a Guillermo
+    // 5. Ciclo Completo: Dino pronuncia sílabas (con micrófono apagado para volumen máximo) -> Abre micrófono y escucha a Guillermo
     async function runWordCycle(slowMode = false) {
         if (isRunningCycle) return;
         isRunningCycle = true;
+
+        stopMicrophoneTracks();
 
         const item = wordsList[currentIdx];
         const mouth = document.getElementById('mouth-anim');
@@ -998,12 +1072,12 @@
             card.classList.add('lit');
             playTone('pop');
             await speakNatural(item.ttsSyllables[i], slowMode ? 0.65 : 0.85);
-            await new Promise(r => setTimeout(r, slowMode ? 350 : 160));
+            await new Promise(r => setTimeout(r, slowMode ? 350 : 180));
             card.classList.remove('lit');
         }
 
         // Pronunciar la palabra completa
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise(r => setTimeout(r, 220));
         item.syllables.forEach((_, i) => document.getElementById(`syl-card-${i}`).classList.add('lit'));
         await speakNatural(item.word, slowMode ? 0.75 : 0.92);
         item.syllables.forEach((_, i) => document.getElementById(`syl-card-${i}`).classList.remove('lit'));
@@ -1014,7 +1088,7 @@
 
     // 6. Escuchar a Guillermo y Diagnosticar si dijo /P/ o si la confundió con /K/, /T/, /B/
     function listenAndEvaluateChild(item) {
-        return new Promise((resolve) => {
+        return new Promise(async (resolve) => {
             const recBox = document.getElementById('recognition-box');
             const titleEl = document.getElementById('prompt-title');
             const bubbleEl = document.getElementById('heard-bubble');
@@ -1032,11 +1106,13 @@
 
             document.getElementById('syl-card-0').classList.add('lit');
 
+            // Encender el medidor de micrófono solo ahora que Dino ya terminó de hablar
+            await startMicrophoneForChildTurn();
+
             let recognizedTranscript = "";
             let allCandidates = [];
             let evaluated = false;
 
-            // Iniciar Reconocimiento de Voz si el navegador lo soporta (Safari iPadOS / Edge / Chrome)
             if (SpeechRecognition) {
                 try {
                     if (recognizer) recognizer.abort();
@@ -1058,12 +1134,11 @@
                             recognizedTranscript = allCandidates[0];
                             bubbleEl.innerHTML = `🗣️ Te he oído decir: <strong>"${recognizedTranscript.toUpperCase()}"</strong>`;
 
-                            // Si ya detectamos un acierto claro, validamos sin hacerle esperar más
                             const verdict = analyzePhonology(item, allCandidates);
                             if (verdict.status === 'correct' && !evaluated) {
                                 evaluated = true;
                                 clearInterval(timer);
-                                try { recognizer.stop(); } catch(e) {}
+                                stopMicrophoneTracks();
                                 finalizeEvaluation(verdict, item, resolve);
                             }
                         }
@@ -1074,7 +1149,7 @@
                 } catch (e) {}
             }
 
-            const listenDuration = 4800; // 4.8 segundos de margen para niños de 4 años
+            const listenDuration = 4800;
             const step = 60;
             let elapsed = 0;
 
@@ -1093,7 +1168,7 @@
                 if (elapsed >= listenDuration && !evaluated) {
                     evaluated = true;
                     clearInterval(timer);
-                    try { if (recognizer) recognizer.stop(); } catch (e) {}
+                    stopMicrophoneTracks();
 
                     const verdict = analyzePhonology(item, allCandidates);
                     finalizeEvaluation(verdict, item, resolve);
@@ -1102,15 +1177,9 @@
         });
     }
 
-    // 7. Motor Logopédico que distingue entre:
-    // - 'correct': Pronunció con /p/ inicial
-    // - 'confused_phoneme': Sustituyó la /p/ por /k/ ("cajarito", "cato"), /t/ ("tato") o /b/
-    // - 'child_spoke_unrecognized': El niño habló fuerte al micrófono pero Siri no transcribió la palabra aislada
-    // - 'silence': No habló todavía
     function analyzePhonology(item, candidates) {
         const joined = candidates.join(' ');
 
-        // 1. ¿Alguno de los candidatos coincide con la palabra con P o empieza por P + vocal correcta?
         for (const cand of candidates) {
             const words = cand.split(/\s+/);
             for (const w of words) {
@@ -1118,17 +1187,15 @@
                 if (item.validMatches.includes(clean)) {
                     return { status: 'correct', heard: clean };
                 }
-                // Si el motor captó una palabra que empieza por la primera sílaba con P (ej. "pa...", "po...", "pi...", "pe...")
                 const targetPrefix = item.word.slice(0, 2).toLowerCase();
-                const targetPrefixNoAccent = targetPrefix.normalize("NFD").replace(/[̀-ͯ]/g, "");
-                const cleanNoAccent = clean.normalize("NFD").replace(/[̀-ͯ]/g, "");
+                const targetPrefixNoAccent = targetPrefix.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                const cleanNoAccent = clean.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 if (cleanNoAccent.startsWith(targetPrefixNoAccent) && cleanNoAccent.length >= 3) {
                     return { status: 'correct', heard: clean };
                 }
             }
         }
 
-        // 2. ¿Cometió una de sus confusiones típicas (/k/, /t/, /b/, /g/ en lugar de /p/)?
         for (const cand of candidates) {
             const words = cand.split(/\s+/);
             for (const w of words) {
@@ -1136,26 +1203,22 @@
                 if (item.velarDentalTraps.includes(clean)) {
                     return { status: 'confused_phoneme', heard: clean };
                 }
-                // Si la terminación es igual (ej. "-ato", "-avo", "-olo", "-elo", "-ajaro", "-ino") pero empieza por C, K, T, B, G
-                const ending = item.word.slice(1).normalize("NFD").replace(/[̀-ͯ]/g, "");
-                const cleanNoAccent = clean.normalize("NFD").replace(/[̀-ͯ]/g, "");
+                const ending = item.word.slice(1).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                const cleanNoAccent = clean.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 if (cleanNoAccent.endsWith(ending) && /^[ctkbgf]/.test(cleanNoAccent)) {
                     return { status: 'confused_phoneme', heard: clean };
                 }
             }
         }
 
-        // 3. Si dijo otra cosa o el micrófono detectó voz clara del niño
         if (candidates.length > 0) {
-            // Si empieza por P lo damos por bueno para no frustrar a un niño de 4 años
             if (joined.trim().startsWith('p')) {
                 return { status: 'correct', heard: candidates[0] };
             }
-            return { status: ' confused_other', heard: candidates[0] };
+            return { status: 'confused_other', heard: candidates[0] };
         }
 
-        // 4. Si el navegador no devolvió texto pero el medidor acústico detectó que Guillermo habló alto
-        if (peakMicVolume > 38) {
+        if (peakMicVolume > 32) {
             return { status: 'voice_detected_ok', heard: item.word };
         }
 
@@ -1163,6 +1226,7 @@
     }
 
     async function finalizeEvaluation(verdict, item, resolve) {
+        stopMicrophoneTracks();
         item.syllables.forEach((_, i) => document.getElementById(`syl-card-${i}`).classList.remove('lit'));
         document.getElementById('mouth-anim').classList.remove('animate-p');
         document.getElementById('timer-bar-wrap').style.display = 'none';
@@ -1182,7 +1246,6 @@
             await handleSuccess(false);
             resolve();
         } else if (verdict.status === 'confused_phoneme') {
-            // Feedback logopédico específico cuando dice "cajarito" o "tato" en vez de "pájaro" o "pato"
             playTone('boing');
             recBox.className = 'recognition-box error-phoneme';
             titleEl.innerHTML = `😮 ¡Casi! Sonó <strong>"${verdict.heard.toUpperCase()}"</strong>`;
@@ -1215,6 +1278,7 @@
     }
 
     async function handleSuccess(manualClick = false) {
+        stopMicrophoneTracks();
         if (manualClick && isRunningCycle) {
             isRunningCycle = false;
         }
@@ -1232,14 +1296,12 @@
         const randomPraise = praises[ currentIdx % praises.length ];
         await speakNatural(randomPraise, 0.95);
 
-        // ¿Completó las 8 palabras?
         if (starsEarned.every(Boolean)) {
             document.getElementById('win-modal').style.display = 'flex';
             await speakNatural("¡Increíble Guillermo! Has conseguido las ocho estrellas tú solito. ¡Dino está súper orgulloso de ti!", 0.95);
             return;
         }
 
-        // Pasar automáticamente a la siguiente palabra para que juegue solo sin tocar nada
         if (autoPlayMode) {
             const nextIdx = starsEarned.findIndex((done, i) => !done && i > currentIdx);
             const fallbackIdx = starsEarned.findIndex(done => !done);
