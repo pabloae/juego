@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Isla de la P">
+    <title>La Isla Mágica de Guillermo</title>
+    <style>
+        :root {
+            --primary: #FF595E;
+            --secondary: #1982C4;
+            --success: #06D6A0;
+            --warning: #FFCA3A;
+            --purple: #6A4C93;
+            --dark: #1D3557;
+            --bg-top: #48CAE4;
+            --bg-bottom: #ADE8F4;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Chalkboard SE', 'Marker Felt', 'Comic Sans MS', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 8px;
+            background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: var(--dark);
+            touch-action: manipulation;
+        }
+
+        /* Pantalla de Bienvenida / Desbloqueo para que juegue solo */
+        #start-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #6A4C93 0%, #1982C4 100%);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .start-modal {
+            background: #ffffff;
+            border-radius: 35px;
+            padding: 30px 25px;
+            max-width: 560px;
+            width: 95%;
+            text-align: center;
+            border: 8px solid var(--warning);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        }
+
+        .big-play-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 28px;
+            padding: 22px 30px;
+            font-size: 2rem;
+            font-weight: 900;
+            width: 100%;
+            box-shadow: 0 10px 0 #04966f;
+            cursor: pointer;
+            margin-top: 18px;
+            animation: pulseBtn 1.5s infinite;
+        }
+
+        @keyframes pulseBtn {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        .big-play-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 4px 0 #04966f;
+        }
+
+        /* Contenedor Principal */
+        #game-shell {
+            width: 98%;
+            max-width: 920px;
+            background: #FFFFFF;
+            border-radius: 32px;
+            padding: 16px 22px;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.22), inset 0 0 0 7px var(--warning);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Barra Superior: Progreso + Modo Autónomo + Selector de Voz */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #F1FAEE;
+            padding: 10px 16px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .stars-row {
+            display: flex;
+            gap: 6px;
+            font-size: 1.75rem;
+        }
+
+        .star-icon {
+            filter: grayscale(100%) opacity(0.28);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .star-icon.won {
+            filter: grayscale(0%) opacity(1);
+            transform: scale(1.25) rotate(10deg);
+        }
+
+        .top-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .badge-btn {
+            background: #E0FBFC;
+            border: 2px solid #98C1D9;
+            color: var(--dark);
+            padding: 6px 12px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .badge-btn.active-mode {
+            background: #D8F3DC;
+            border-color: #40916C;
+            color: #1B4332;
+        }
+
+        /* Escenario Principal Dividido: Mascota + Tarjeta Palabra */
+        .main-stage {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 700px) {
+            .main-stage {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Panel Izquierdo: Mascota Dino + Boca Animada + Medidor de Voz */
+        .mascot-panel {
+            background: linear-gradient(160deg, #FFF3B0 0%, #FFEA85 100%);
+            border: 4px solid #FF9F1C;
+            border-radius: 26px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        .dino-avatar {
+            font-size: 4.5rem;
+            line-height: 1;
+            filter: drop-shadow(0 6px 8px rgba(0,0,0,0.15));
+            transition: transform 0.3s;
+        }
+
+        .dino-talking {
+            animation: dinoHop 0.4s infinite alternate;
+        }
+
+        @keyframes dinoHop {
+            from { transform: translateY(0) rotate(-4deg); }
+            to { transform: translateY(-10px) rotate(4deg); }
+        }
+
+        /* Boca Didáctica para el fonema /P/ */
+        .lip-helper {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 10px;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            margin: 8px 0;
+        }
+
+        .mouth-svg-wrap {
+            width: 90px;
+            height: 54px;
+            margin: 0 auto 4px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lip-upper, .lip-lower {
+            width: 72px;
+            height: 17px;
+            background: #E63946;
+            border-radius: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .mouth-svg-wrap.animate-p .lip-upper {
+            animation: popUpper 0.65s infinite;
+        }
+        .mouth-svg-wrap.animate-p .lip-lower {
+            animation: popLower 0.65s infinite;
+        }
+
+        @keyframes popUpper {
+            0%, 45% { transform: translateY(4px) scaleX(1.06); }
+            65% { transform: translateY(-10px) scaleX(0.92); }
+            100% { transform: translateY(4px); }
+        }
+        @keyframes popLower {
+            0%, 45% { transform: translateY(-4px) scaleX(1.06); }
+            65% { transform: translateY(10px) scaleX(0.92); }
+            100% { transform: translateY(-4px); }
+        }
+
+        /* Medidor de Volumen en Vivo del Micrófono */
+        .mic-meter-box {
+            width: 100%;
+            background: #fff;
+            border-radius: 16px;
+            padding: 8px 10px;
+            border: 2px solid #ccc;
+        }
+
+        .mic-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 5px;
+            height: 32px;
+            margin-top: 4px;
+        }
+
+        .m-bar {
+            width: 10px;
+            height: 6px;
+            background: #06D6A0;
+            border-radius: 5px;
+            transition: height 0.08s ease, background 0.1s;
+        }
+
+        /* Panel Derecho: Objeto, Sílabas y Reconocimiento */
+        .word-panel {
+            background: linear-gradient(145deg, #F8F9FA, #E9ECEF);
+            border: 4px solid var(--secondary);
+            border-radius: 26px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .picture-frame {
+            font-size: 7.2rem;
+            line-height: 1.05;
+            cursor: pointer;
+            filter: drop-shadow(0 10px 14px rgba(0,0,0,0.16));
+            transition: transform 0.25s;
+            margin: 4px 0;
+        }
+
+        .picture-frame:active {
+            transform: scale(0.92);
+        }
+
+        .syllable-row {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+        .syl-card {
+            font-size: 2.6rem;
+            font-weight: 900;
+            padding: 8px 26px;
+            border-radius: 22px;
+            background: #ffffff;
+            color: var(--dark);
+            border: 4px solid #CED4DA;
+            box-shadow: 0 7px 0 #ADB5BD;
+            transition: all 0.22s ease;
+        }
+
+        .syl-card.initial-p {
+            border-color: var(--primary);
+        }
+
+        .syl-card.initial-p .highlight-p {
+            color: var(--primary);
+            font-size: 3rem;
+            text-decoration: underline;
+        }
+
+        .syl-card.lit {
+            background: var(--warning);
+            border-color: #F77F00;
+            transform: translateY(-10px) scale(1.14);
+            box-shadow: 0 14px 22px rgba(247, 127, 0, 0.35), 0 7px 0 #D62828;
+        }
+
+        /* Zona de Feedback de Reconocimiento de Voz */
+        .recognition-box {
+            width: 100%;
+            min-height: 92px;
+            border-radius: 20px;
+            padding: 12px 16px;
+            background: #EBF5FF;
+            border: 3px solid #90E0EF;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .recognition-box.listening {
+            background: #E8F8F5;
+            border-color: #06D6A0;
+            animation: glowMic 1.1s infinite;
+        }
+
+        .recognition-box.error-phoneme {
+            background: #FFF0F3;
+            border-color: #FF4D6D;
+        }
+
+        .recognition-box.correct-phoneme {
+            background: #D8F3DC;
+            border-color: #2D6A4F;
+        }
+
+        @keyframes glowMic {
+            0% { box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.6); }
+            70% { box-shadow: 0 0 0 18px rgba(6, 214, 160, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(6, 214, 160, 0); }
+        }
+
+        .prompt-title {
+            font-size: 1.35rem;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .heard-bubble {
+            font-size: 1.05rem;
+            color: #495057;
+            background: rgba(255,255,255,0.85);
+            padding: 4px 14px;
+            border-radius: 12px;
+            margin-top: 4px;
+        }
+
+        .timer-bar-wrap {
+            width: 90%;
+            height: 16px;
+            background: #DEE2E6;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .timer-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #06D6A0, #FFCA3A, #FF595E);
+            transition: width 0.1s linear;
+        }
+
+        /* Botones Grandes para que Guillermo toque solo */
+        .kid-actions {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            justify-content: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .kid-btn {
+            border: none;
+            border-radius: 22px;
+            padding: 14px 22px;
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.1s;
+        }
+
+        .kid-btn:active:not(:disabled) {
+            transform: translateY(4px);
+        }
+
+        .kid-btn:disabled {
+            opacity: 0.45;
+        }
+
+        .btn-repeat-audio {
+            background: #1982C4;
+            box-shadow: 0 6px 0 #0F4C75;
+        }
+
+        .btn-turtle {
+            background: #F77F00;
+            box-shadow: 0 6px 0 #AC5800;
+        }
+
+        .btn-manual-ok {
+            background: #06D6A0;
+            box-shadow: 0 6px 0 #048C68;
+        }
+
+        /* Carrusel inferior de las 8 palabras */
+        .words-dock {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .dock-item {
+            background: #F8F9FA;
+            border: 3px solid #DEE2E6;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .dock-item.current {
+            border-color: var(--primary);
+            background: #FFF0F3;
+            transform: scale(1.08);
+        }
+
+        .dock-item.completed {
+            background: #D8F3DC;
+            border-color: #52B788;
+        }
+
+        /* Confeti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 900;
+        }
+
+        /* Modal de Ajustes de Voz Neural / Edge / iPad */
+        #voice-modal, #win-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 1100;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 28px;
+            padding: 25px;
+            max-width: 540px;
+            width: 95%;
+            border: 6px solid var(--warning);
+            text-align: center;
+        }
+
+        select.voice-select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 14px;
+            border: 2px solid var(--secondary);
+            font-size: 1.05rem;
+            margin: 12px 0;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- Pantalla de Inicio para que Guillermo pulse y active Voz + Micrófono -->
+<div id="start-overlay">
+    <div class="start-modal">
+        <div style="font-size: 4.8rem;">🦖🎤🏝️</div>
+        <h1 style="color: var(--purple); margin: 8px 0; font-size: 2.1rem;">¡La Isla de Dino y Guillermo!</h1>
+        <p style="font-size: 1.2rem; color: #333; line-height: 1.4;">
+            Dino te dirá una palabra mágica con la <strong>P</strong>.<br>
+            ¡Luego <strong>habla tú al iPad</strong> para que Dino te escuche solito!
+        </p>
+        <button class="big-play-btn" onclick="initializeAutonomousGame()">
+            🚀 ¡EMPEZAR A JUGAR SOLO!
+        </button>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 14px;">
+            🔒 Al pulsar, acepta el permiso del <strong>Micrófono</strong> para que el juego evalúe la pronunciación de Guillermo automáticamente.
+        </p>
+    </div>
+</div>
+
+<div id="game-shell">
+    <!-- Barra Superior -->
+    <div class="top-bar">
+        <div class="stars-row" id="stars-row"></div>
+        <div class="top-controls">
+            <button class="badge-btn active-mode" id="auto-toggle-btn" onclick="toggleAutoPlay()">
+                🤖 Juego Solo: ACTIVADO
+            </button>
+            <button class="badge-btn" onclick="openVoiceModal()">
+                🗣️ Voz Natural (<span id="current-voice-label">Auto</span>)
+            </button>
+        </div>
+    </div>
+
+    <!-- Escenario Principal -->
+    <div class="main-stage">
+        <!-- Columna Izquierda: Dino + Labios + Micrófono en vivo -->
+        <div class="mascot-panel">
+            <div>
+                <div class="dino-avatar" id="dino-avatar">🦖</div>
+                <div style="font-weight: 900; color: #7F4F24; font-size: 1.05rem; margin-top: 4px;" id="dino-speech">
+                    ¡Hola Guillermo!
+                </div>
+            </div>
+
+            <div class="lip-helper">
+                <div class="mouth-svg-wrap" id="mouth-anim">
+                    <div class="lip-upper"></div>
+                    <div class="lip-lower"></div>
+                </div>
+                <div style="font-size: 0.95rem; font-weight: bold; color: #D62828;">
+                    ¡Junta los 2 labios: P-P-P!
+                </div>
+            </div>
+
+            <div class="mic-meter-box">
+                <div style="font-size: 0.85rem; font-weight: bold; color: #555;" id="mic-status-label">
+                    🎙️ Nivel de tu voz
+                </div>
+                <div class="mic-bars" id="mic-bars">
+                    <div class="m-bar"></div>
+                    <div class="m-bar"></div>
+                    <div class="m-bar"></div>
+                    <div class="m-bar"></div>
+                    <div class="m-bar"></div>
+                    <div class="m-bar"></div>
+                    <div class="m-bar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Dibujo, Sílabas y Evaluador Fonológico -->
+        <div class="word-panel">
+            <div class="picture-frame" id="picture-frame" onclick="runWordCycle(false)">
+                🦃
+            </div>
+
+            <div class="syllable-row" id="syllable-row"></div>
+
+            <!-- Evaluador Inteligente -->
+            <div class="recognition-box" id="recognition-box">
+                <div class="prompt-title" id="prompt-title">
+                    👂 Preparando palabra...
+                </div>
+                <div class="heard-bubble" id="heard-bubble">
+                    Dino te escuchará cuando salga el micrófono verde
+                </div>
+                <div class="timer-bar-wrap" id="timer-bar-wrap">
+                    <div class="timer-bar-fill" id="timer-bar-fill"></div>
+                </div>
+            </div>
+
+            <!-- Botones de apoyo -->
+            <div class="kid-actions">
+                <button class="kid-btn btn-repeat-audio" id="btn-repeat" onclick="runWordCycle(false)">
+                    🔊 Escuchar
+                </button>
+                <button class="kid-btn btn-turtle" id="btn-slow" onclick="runWordCycle(true)">
+                    🐢 Despacito
+                </button>
+                <button class="kid-btn btn-manual-ok" id="btn-skip" onclick="handleSuccess(true)">
+                    ⭐ ¡Ya lo dije!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Selector de las 8 palabras -->
+    <div class="words-dock" id="words-dock"></div>
+</div>
+
+<!-- Modal Selector de Voz Natural (Edge Neural / Siri Premium) -->
+<div id="voice-modal">
+    <div class="modal-box">
+        <h2 style="margin-top:0; color: var(--purple);">🗣️ Configurar Voz Natural</h2>
+        <p style="font-size: 0.98rem; text-align: left; line-height: 1.45; background: #F8F9FA; padding: 12px; border-radius: 14px;">
+            💡 <strong>Truco para tener la voz neuronal humana de Microsoft Edge o Apple:</strong><br>
+            • Si abres este archivo en la app gratuita <strong>Microsoft Edge</strong> (en PC, Mac o iPad), selecciona aquí abajo la voz <strong>"Microsoft Alvaro Online (Natural)"</strong> o <strong>"Microsoft Elvira Online (Natural)"</strong>.<br>
+            • Si juegas en <strong>Safari del iPad</strong>, elige <strong>"Mónica (Mejorada)"</strong>, <strong>"Marisol (Premium)"</strong> o <strong>"Siri"</strong> (puedes descargarlas gratis en <em>Ajustes del iPad &rarr; Accesibilidad &rarr; Contenido leído &rarr; Voces &rarr; Español</em>).
+        </p>
+        <select id="voice-select" class="voice-select" onchange="changeSelectedVoice()"></select>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 12px;">
+            <button class="kid-btn btn-repeat-audio" onclick="testCurrentVoice()">🔊 Probar Voz</button>
+            <button class="kid-btn btn-manual-ok" onclick="closeVoiceModal()">✅ Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Victoria -->
+<div id="win-modal">
+    <div class="modal-box">
+        <div style="font-size: 4.8rem;">🏆🦖🐸🌟</div>
+        <h1 style="color: var(--purple); margin: 8px 0;">¡LO HICISTE TÚ SOLITO, GUILLERMO!</h1>
+        <p style="font-size: 1.2rem;">
+            ¡Dino y la rana están súper contentos! Has dicho las 8 palabras juntando los labios en la <strong>P</strong>.
+        </p>
+        <button class="big-play-btn" onclick="restartWholeGame()">
+            🔄 ¡JUGAR OTRA VEZ!
+        </button>
+    </div>
+</div>
+
+<script>
+    // Diccionario fonológico con detector específico de las confusiones de Guillermo (/k/, /t/, /b/, /g/, /f/ por /p/)
+    const wordsList = [
+        {
+            word: "pavo",
+            syllables: ["PA", "VO"],
+            ttsSyllables: ["pa", "bo"],
+            emoji: "🦃",
+            validMatches: ["pavo", "pabo", "pabos", "pavos", "pago"],
+            velarDentalTraps: ["cabo", "cavo", "kabo", "tabo", "tavo", "babo", "vavo", "gabo", "favo"]
+        },
+        {
+            word: "pato",
+            syllables: ["PA", "TO"],
+            ttsSyllables: ["pa", "to"],
+            emoji: "🦆",
+            validMatches: ["pato", "patos", "pacto", "parto"],
+            velarDentalTraps: ["tato", "cato", "gato", "kato", "bato", "chato", "dato"]
+        },
+        {
+            word: "pollo",
+            syllables: ["PO", "LLO"],
+            ttsSyllables: ["po", "yo"],
+            emoji: "🐥",
+            validMatches: ["pollo", "poyo", "pollos", "poyos", "polo", "poho"],
+            velarDentalTraps: ["collo", "coyo", "tollo", "toyo", "bollo", "boyo", "gollo", "koyo"]
+        },
+        {
+            word: "pelo",
+            syllables: ["PE", "LO"],
+            ttsSyllables: ["pe", "lo"],
+            emoji: "💇‍♂️",
+            validMatches: ["pelo", "pelos", "pero", "pedo"],
+            velarDentalTraps: ["telo", "celo", "kelo", "belo", "velo", "gelo", "ielo"]
+        },
+        {
+            word: "polo",
+            syllables: ["PO", "LO"],
+            ttsSyllables: ["po", "lo"],
+            emoji: "🍧",
+            validMatches: ["polo", "polos", "poro", "podo", "pollo"],
+            velarDentalTraps: ["colo", "tolo", "bolo", "golo", "kolo", "solo", "dolo"]
+        },
+        {
+            word: "pájaro",
+            syllables: ["PÁ", "JA", "RO"],
+            ttsSyllables: ["pa", "ja", "ro"],
+            emoji: "🐦",
+            validMatches: ["pájaro", "pajaro", "pajarito", "pajaritos", "pajaros", "pájaros", "pajado", "pajalo"],
+            velarDentalTraps: ["cajaro", "cájaro", "cajarito", "cajaritos", "tajaro", "tajarito", "bajaro", "gajaro", "kajaro"]
+        },
+        {
+            word: "perdiz",
+            syllables: ["PER", "DIZ"],
+            ttsSyllables: ["per", "diz"],
+            emoji: "🐦",
+            validMatches: ["perdiz", "perdi", "perdis", "pediz", "pedi", "perdiz", "feliz", "perdí"],
+            velarDentalTraps: ["terdiz", "cerdiz", "kerdiz", "berdiz", "terdi", "cerdi", "cardiz"]
+        },
+        {
+            word: "pino",
+            syllables: ["PI", "NO"],
+            ttsSyllables: ["pi", "no"],
+            emoji: "🌲",
+            validMatches: ["pino", "pinos", "pimo", "piro", "pido"],
+            velarDentalTraps: ["tino", "chino", "kino", "vino", "bino", "fino", "dino"]
+        }
+    ];
+
+    let currentIdx = 0;
+    let starsEarned = new Array(wordsList.length).fill(false);
+    let autoPlayMode = true;
+    let isRunningCycle = false;
+    let chosenVoice = null;
+
+    // Audio & Mic Analyzer
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    let micStream = null;
+    let analyser = null;
+    let volumeInterval = null;
+    let peakMicVolume = 0;
+
+    // Reconocimiento de voz nativo (WebKit Speech Recognition para Safari/iPad y Chrome/Edge)
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognizer = null;
+    let recognitionActive = false;
+
+    // 1. Selección inteligente de la voz más humana disponible (priorizando Microsoft Edge Online Natural y Apple Enhanced/Siri)
+    function loadBestSpanishVoices() {
+        if (!('speechSynthesis' in window)) return;
+        const allVoices = window.speechSynthesis.getVoices();
+        const esVoices = allVoices.filter(v => v.lang.toLowerCase().startsWith('es'));
+
+        const selectEl = document.getElementById('voice-select');
+        selectEl.innerHTML = '';
+
+        // Puntuar voces por naturalidad (Edge Neural > Apple Premium/Enhanced > Google > Estándar)
+        const scoredVoices = esVoices.map(v => {
+            let score = 0;
+            const name = v.name.toLowerCase();
+            const lang = v.lang.toLowerCase();
+            if (lang.includes('es-es')) score += 25;
+            if (name.includes('natural') || name.includes('online')) score += 100; // Voces neuronales de Edge
+            if (name.includes('elvira') || name.includes('alvaro') || name.includes('dalia') || name.includes('jorge')) score += 60;
+            if (name.includes('premium') || name.includes('enhanced') || name.includes('mejorada') || name.includes('siri')) score += 80; // Voces HD de iPad
+            if (name.includes('mónica') || name.includes('monica') || name.includes('marisol') || name.includes('paulina')) score += 20;
+            if (name.includes('google')) score += 40;
+            return { voice: v, score };
+        }).sort((a, b) => b.score - a.score);
+
+        scoredVoices.forEach((item, idx) => {
+            const opt = document.createElement('option');
+            opt.value = item.voice.name;
+            opt.textContent = `${item.voice.name} (${item.voice.lang})`;
+            selectEl.appendChild(opt);
+            if (idx === 0 && !chosenVoice) {
+                chosenVoice = item.voice;
+            }
+        });
+
+        if (chosenVoice) {
+            selectEl.value = chosenVoice.name;
+            const shortName = chosenVoice.name.replace(/Microsoft |Apple |Online \(Natural\) |Google /g, '').split(' ')[0];
+            document.getElementById('current-voice-label').textContent = shortName;
+        }
+    }
+
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = loadBestSpanishVoices;
+    }
+
+    function changeSelectedVoice() {
+        const val = document.getElementById('voice-select').value;
+        const voices = window.speechSynthesis.getVoices();
+        chosenVoice = voices.find(v => v.name === val) || chosenVoice;
+        if (chosenVoice) {
+            const shortName = chosenVoice.name.replace(/Microsoft |Apple |Online \(Natural\) /g, '').split(' ')[0];
+            document.getElementById('current-voice-label').textContent = shortName;
+        }
+    }
+
+    function openVoiceModal() {
+        loadBestSpanishVoices();
+        document.getElementById('voice-modal').style.display = 'flex';
+    }
+
+    function closeVoiceModal() {
+        document.getElementById('voice-modal').style.display = 'none';
+    }
+
+    function testCurrentVoice() {
+        speakNatural("¡Hola Guillermo! Soy tu amigo Dino y vamos a jugar con las palabras mágicas.", 0.95);
+    }
+
+    // 2. Síntesis de voz natural + Audio proxy online opcional
+    function speakNatural(text, rate = 0.9) {
+        return new Promise((resolve) => {
+            const dino = document.getElementById('dino-avatar');
+            dino.classList.add('dino-talking');
+
+            let finished = false;
+            const finish = () => {
+                if (!finished) {
+                    finished = true;
+                    dino.classList.remove('dino-talking');
+                    resolve();
+                }
+            };
+
+            if (!('speechSynthesis' in window)) {
+                setTimeout(finish, 900);
+                return;
+            }
+
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'es-ES';
+            utter.rate = rate;
+            utter.pitch = 1.05;
+            if (chosenVoice) utter.voice = chosenVoice;
+
+            utter.onend = finish;
+            utter.onerror = finish;
+
+            // Salvavidas de tiempo para iPad Safari
+            const estDuration = Math.max(1300, text.length * 110);
+            setTimeout(finish, estDuration);
+
+            window.speechSynthesis.speak(utter);
+        });
+    }
+
+    // 3. Inicializar Micrófono en Vivo (Medidor de barras + Reconocimiento de voz)
+    async function setupLiveMicrophone() {
+        try {
+            micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+            if (!audioCtx && AudioContextClass) audioCtx = new AudioContextClass();
+            const source = audioCtx.createMediaStreamSource(micStream);
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 256;
+            source.connect(analyser);
+
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            const bars = document.querySelectorAll('#mic-bars .m-bar');
+
+            volumeInterval = setInterval(() => {
+                analyser.getByteFrequencyData(dataArray);
+                let sum = 0;
+                for (let i = 0; i < 35; i++) sum += dataArray[i];
+                const avg = sum / 35;
+                if (avg > peakMicVolume) peakMicVolume = avg;
+
+                bars.forEach((bar, idx) => {
+                    const factor = (idx + 1) / bars.length;
+                    const h = Math.min(32, Math.max(5, (avg * factor * 0.45)));
+                    bar.style.height = h + 'px';
+                    bar.style.background = avg > 35 ? '#06D6A0' : '#ADB5BD';
+                });
+            }, 70);
+        } catch (err) {
+            document.getElementById('mic-status-label').textContent = '🎙️ Micrófono en modo simple';
+        }
+    }
+
+    // 4. Desbloqueo e Inicio Autónomo
+    async function initializeAutonomousGame() {
+        if (!audioCtx && AudioContextClass) audioCtx = new AudioContextClass();
+        if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
+
+        loadBestSpanishVoices();
+        await setupLiveMicrophone();
+
+        document.getElementById('start-overlay').style.display = 'none';
+        playTone('ding');
+
+        await speakNatural("¡Hola Guillermo! Mira mis labios y repite después de mí.", 0.95);
+        loadWordCard(0, true);
+    }
+
+    function renderTopStars() {
+        const row = document.getElementById('stars-row');
+        row.innerHTML = '';
+        starsEarned.forEach(won => {
+            const s = document.createElement('span');
+            s.className = 'star-icon' + (won ? ' won' : '');
+            s.textContent = '⭐';
+            row.appendChild(s);
+        });
+    }
+
+    function renderBottomDock() {
+        const dock = document.getElementById('words-dock');
+        dock.innerHTML = '';
+        wordsList.forEach((item, idx) => {
+            const el = document.createElement('div');
+            el.className = 'dock-item' + (idx === currentIdx ? ' current' : '') + (starsEarned[idx] ? ' completed' : '');
+            el.innerHTML = `<span>${item.emoji}</span> <span>${item.word.toUpperCase()}</span>`;
+            el.onclick = () => {
+                if (!isRunningCycle) loadWordCard(idx, autoPlayMode);
+            };
+            dock.appendChild(el);
+        });
+    }
+
+    function loadWordCard(index, autoStartNow = false) {
+        currentIdx = index;
+        const item = wordsList[currentIdx];
+
+        document.getElementById('picture-frame').textContent = item.emoji;
+
+        const sylRow = document.getElementById('syllable-row');
+        sylRow.innerHTML = '';
+        item.syllables.forEach((syl, i) => {
+            const card = document.createElement('div');
+            card.className = 'syl-card' + (i === 0 ? ' initial-p' : '');
+            card.id = `syl-card-${i}`;
+            if (i === 0) {
+                card.innerHTML = `<span class="highlight-p">${syl[0]}</span>${syl.slice(1)}`;
+            } else {
+                card.textContent = syl;
+            }
+            sylRow.appendChild(card);
+        });
+
+        const recBox = document.getElementById('recognition-box');
+        recBox.className = 'recognition-box';
+        document.getElementById('prompt-title').innerHTML = `👆 Toca el dibujo de <strong>${item.word.toUpperCase()}</strong>`;
+        document.getElementById('heard-bubble').textContent = `Empieza juntando los dos labios: ¡PPP!`;
+        document.getElementById('timer-bar-wrap').style.display = 'none';
+
+        renderTopStars();
+        renderBottomDock();
+
+        if (autoStartNow) {
+            setTimeout(() => runWordCycle(false), 450);
+        }
+    }
+
+    // 5. Ciclo Completo: Dino pronuncia sílabas -> Palabra -> Escucha y Evalúa a Guillermo
+    async function runWordCycle(slowMode = false) {
+        if (isRunningCycle) return;
+        isRunningCycle = true;
+
+        const item = wordsList[currentIdx];
+        const mouth = document.getElementById('mouth-anim');
+        const recBox = document.getElementById('recognition-box');
+
+        document.getElementById('btn-repeat').disabled = true;
+        document.getElementById('btn-slow').disabled = true;
+
+        recBox.className = 'recognition-box';
+        document.getElementById('prompt-title').innerHTML = `👂 <strong>¡Escucha a Dino y mira los labios!</strong>`;
+        document.getElementById('heard-bubble').textContent = `Junta los labios como en el dibujo...`;
+        document.getElementById('dino-speech').textContent = `¡Mira mis labios!`;
+
+        mouth.classList.add('animate-p');
+
+        // Pronunciar cada sílaba iluminándola
+        for (let i = 0; i < item.syllables.length; i++) {
+            const card = document.getElementById(`syl-card-${i}`);
+            card.classList.add('lit');
+            playTone('pop');
+            await speakNatural(item.ttsSyllables[i], slowMode ? 0.65 : 0.85);
+            await new Promise(r => setTimeout(r, slowMode ? 350 : 160));
+            card.classList.remove('lit');
+        }
+
+        // Pronunciar la palabra completa
+        await new Promise(r => setTimeout(r, 200));
+        item.syllables.forEach((_, i) => document.getElementById(`syl-card-${i}`).classList.add('lit'));
+        await speakNatural(item.word, slowMode ? 0.75 : 0.92);
+        item.syllables.forEach((_, i) => document.getElementById(`syl-card-${i}`).classList.remove('lit'));
+
+        // Abrir turno de escucha y evaluación de Guillermo
+        await listenAndEvaluateChild(item);
+    }
+
+    // 6. Escuchar a Guillermo y Diagnosticar si dijo /P/ o si la confundió con /K/, /T/, /B/
+    function listenAndEvaluateChild(item) {
+        return new Promise((resolve) => {
+            const recBox = document.getElementById('recognition-box');
+            const titleEl = document.getElementById('prompt-title');
+            const bubbleEl = document.getElementById('heard-bubble');
+            const barWrap = document.getElementById('timer-bar-wrap');
+            const barFill = document.getElementById('timer-bar-fill');
+
+            recBox.className = 'recognition-box listening';
+            titleEl.innerHTML = `🎤 <strong>¡HABLA TÚ AHORA, GUILLERMO!</strong> Di: <span style="color:#D62828;">¡${item.word.toUpperCase()}!</span>`;
+            bubbleEl.textContent = `👂 Escuchando tu voz...`;
+            document.getElementById('dino-speech').textContent = `¡Te escucho!`;
+
+            barWrap.style.display = 'block';
+            barFill.style.width = '0%';
+            peakMicVolume = 0;
+
+            document.getElementById('syl-card-0').classList.add('lit');
+
+            let recognizedTranscript = "";
+            let allCandidates = [];
+            let evaluated = false;
+
+            // Iniciar Reconocimiento de Voz si el navegador lo soporta (Safari iPadOS / Edge / Chrome)
+            if (SpeechRecognition) {
+                try {
+                    if (recognizer) recognizer.abort();
+                    recognizer = new SpeechRecognition();
+                    recognizer.lang = 'es-ES';
+                    recognizer.continuous = false;
+                    recognizer.interimResults = true;
+                    recognizer.maxAlternatives = 5;
+
+                    recognizer.onresult = (event) => {
+                        allCandidates = [];
+                        for (let i = 0; i < event.results.length; i++) {
+                            const res = event.results[i];
+                            for (let j = 0; j < res.length; j++) {
+                                allCandidates.push(res[j].transcript.toLowerCase().trim());
+                            }
+                        }
+                        if (allCandidates.length > 0) {
+                            recognizedTranscript = allCandidates[0];
+                            bubbleEl.innerHTML = `🗣️ Te he oído decir: <strong>"${recognizedTranscript.toUpperCase()}"</strong>`;
+
+                            // Si ya detectamos un acierto claro, validamos sin hacerle esperar más
+                            const verdict = analyzePhonology(item, allCandidates);
+                            if (verdict.status === 'correct' && !evaluated) {
+                                evaluated = true;
+                                clearInterval(timer);
+                                try { recognizer.stop(); } catch(e) {}
+                                finalizeEvaluation(verdict, item, resolve);
+                            }
+                        }
+                    };
+
+                    recognizer.onerror = () => {};
+                    recognizer.start();
+                } catch (e) {}
+            }
+
+            const listenDuration = 4800; // 4.8 segundos de margen para niños de 4 años
+            const step = 60;
+            let elapsed = 0;
+
+            const timer = setInterval(() => {
+                elapsed += step;
+                const pct = Math.min(100, (elapsed / listenDuration) * 100);
+                barFill.style.width = pct + '%';
+
+                if (pct > 45) {
+                    document.getElementById('syl-card-0').classList.remove('lit');
+                    if (document.getElementById('syl-card-1')) {
+                        document.getElementById('syl-card-1').classList.add('lit');
+                    }
+                }
+
+                if (elapsed >= listenDuration && !evaluated) {
+                    evaluated = true;
+                    clearInterval(timer);
+                    try { if (recognizer) recognizer.stop(); } catch (e) {}
+
+                    const verdict = analyzePhonology(item, allCandidates);
+                    finalizeEvaluation(verdict, item, resolve);
+                }
+            }, step);
+        });
+    }
+
+    // 7. Motor Logopédico que distingue entre:
+    // - 'correct': Pronunció con /p/ inicial
+    // - 'confused_phoneme': Sustituyó la /p/ por /k/ ("cajarito", "cato"), /t/ ("tato") o /b/
+    // - 'child_spoke_unrecognized': El niño habló fuerte al micrófono pero Siri no transcribió la palabra aislada
+    // - 'silence': No habló todavía
+    function analyzePhonology(item, candidates) {
+        const joined = candidates.join(' ');
+
+        // 1. ¿Alguno de los candidatos coincide con la palabra con P o empieza por P + vocal correcta?
+        for (const cand of candidates) {
+            const words = cand.split(/\s+/);
+            for (const w of words) {
+                const clean = w.replace(/[.,¡!¿?]/g, '');
+                if (item.validMatches.includes(clean)) {
+                    return { status: 'correct', heard: clean };
+                }
+                // Si el motor captó una palabra que empieza por la primera sílaba con P (ej. "pa...", "po...", "pi...", "pe...")
+                const targetPrefix = item.word.slice(0, 2).toLowerCase();
+                const targetPrefixNoAccent = targetPrefix.normalize("NFD").replace(/[̀-ͯ]/g, "");
+                const cleanNoAccent = clean.normalize("NFD").replace(/[̀-ͯ]/g, "");
+                if (cleanNoAccent.startsWith(targetPrefixNoAccent) && cleanNoAccent.length >= 3) {
+                    return { status: 'correct', heard: clean };
+                }
+            }
+        }
+
+        // 2. ¿Cometió una de sus confusiones típicas (/k/, /t/, /b/, /g/ en lugar de /p/)?
+        for (const cand of candidates) {
+            const words = cand.split(/\s+/);
+            for (const w of words) {
+                const clean = w.replace(/[.,¡!¿?]/g, '');
+                if (item.velarDentalTraps.includes(clean)) {
+                    return { status: 'confused_phoneme', heard: clean };
+                }
+                // Si la terminación es igual (ej. "-ato", "-avo", "-olo", "-elo", "-ajaro", "-ino") pero empieza por C, K, T, B, G
+                const ending = item.word.slice(1).normalize("NFD").replace(/[̀-ͯ]/g, "");
+                const cleanNoAccent = clean.normalize("NFD").replace(/[̀-ͯ]/g, "");
+                if (cleanNoAccent.endsWith(ending) && /^[ctkbgf]/.test(cleanNoAccent)) {
+                    return { status: 'confused_phoneme', heard: clean };
+                }
+            }
+        }
+
+        // 3. Si dijo otra cosa o el micrófono detectó voz clara del niño
+        if (candidates.length > 0) {
+            // Si empieza por P lo damos por bueno para no frustrar a un niño de 4 años
+            if (joined.trim().startsWith('p')) {
+                return { status: 'correct', heard: candidates[0] };
+            }
+            return { status: ' confused_other', heard: candidates[0] };
+        }
+
+        // 4. Si el navegador no devolvió texto pero el medidor acústico detectó que Guillermo habló alto
+        if (peakMicVolume > 38) {
+            return { status: 'voice_detected_ok', heard: item.word };
+        }
+
+        return { status: 'silence', heard: '' };
+    }
+
+    async function finalizeEvaluation(verdict, item, resolve) {
+        item.syllables.forEach((_, i) => document.getElementById(`syl-card-${i}`).classList.remove('lit'));
+        document.getElementById('mouth-anim').classList.remove('animate-p');
+        document.getElementById('timer-bar-wrap').style.display = 'none';
+
+        const recBox = document.getElementById('recognition-box');
+        const titleEl = document.getElementById('prompt-title');
+        const bubbleEl = document.getElementById('heard-bubble');
+
+        document.getElementById('btn-repeat').disabled = false;
+        document.getElementById('btn-slow').disabled = false;
+
+        if (verdict.status === 'correct' || verdict.status === 'voice_detected_ok') {
+            recBox.className = 'recognition-box correct-phoneme';
+            titleEl.innerHTML = `🌟 <strong>¡SÚPER BIEN, GUILLERMO!</strong> ¡Dijiste <strong>${item.word.toUpperCase()}</strong> con la P!`;
+            bubbleEl.innerHTML = `👏 ¡Juntaste los labios como un campeón!`;
+            isRunningCycle = false;
+            await handleSuccess(false);
+            resolve();
+        } else if (verdict.status === 'confused_phoneme') {
+            // Feedback logopédico específico cuando dice "cajarito" o "tato" en vez de "pájaro" o "pato"
+            playTone('boing');
+            recBox.className = 'recognition-box error-phoneme';
+            titleEl.innerHTML = `😮 ¡Casi! Sonó <strong>"${verdict.heard.toUpperCase()}"</strong>`;
+            bubbleEl.innerHTML = `👄 ¡Recuerda! No uses la garganta ni la lengua, <strong>junta los dos labios: ¡PPP - ${item.word.toUpperCase()}!</strong>`;
+            await speakNatural(`¡Casi Guillermo! Sonó ${verdict.heard}. Junta fuerte los dos labios y di: ${item.word}`, 0.9);
+            isRunningCycle = false;
+            if (autoPlayMode) {
+                setTimeout(() => runWordCycle(true), 900);
+            }
+            resolve();
+        } else if (verdict.status === 'silence') {
+            recBox.className = 'recognition-box';
+            titleEl.innerHTML = `🎤 ¡No te he oído! Di fuerte: <strong>¡${item.word.toUpperCase()}!</strong>`;
+            bubbleEl.innerHTML = `Toca "Escuchar" para intentarlo otra vez o la estrella verde si ya lo dijiste.`;
+            await speakNatural(`Anímate Guillermo, di fuerte ${item.word}`, 0.92);
+            isRunningCycle = false;
+            resolve();
+        } else {
+            playTone('boing');
+            recBox.className = 'recognition-box error-phoneme';
+            titleEl.innerHTML = `👂 He oído <strong>"${verdict.heard.toUpperCase()}"</strong>. ¡Probemos despacito!`;
+            bubbleEl.innerHTML = `Junta los dos labios al principio: <strong>${item.syllables.join(' - ')}</strong>`;
+            await speakNatural(`Vamos a decirlo despacito juntando los labios: ${item.word}`, 0.9);
+            isRunningCycle = false;
+            if (autoPlayMode) {
+                setTimeout(() => runWordCycle(true), 800);
+            }
+            resolve();
+        }
+    }
+
+    async function handleSuccess(manualClick = false) {
+        if (manualClick && isRunningCycle) {
+            isRunningCycle = false;
+        }
+        playTone('ding');
+        fireConfetti();
+        starsEarned[currentIdx] = true;
+        renderTopStars();
+        renderBottomDock();
+
+        const praises = [
+            `¡Muy bien Guillermo! ¡Has dicho ${wordsList[currentIdx].word} genial!`,
+            `¡Bravo campeón! ¡Qué bien juntas los labios en ${wordsList[currentIdx].word}!`,
+            `¡Estrella conseguida! ¡Excelente ${wordsList[currentIdx].word}!`
+        ];
+        const randomPraise = praises[ currentIdx % praises.length ];
+        await speakNatural(randomPraise, 0.95);
+
+        // ¿Completó las 8 palabras?
+        if (starsEarned.every(Boolean)) {
+            document.getElementById('win-modal').style.display = 'flex';
+            await speakNatural("¡Increíble Guillermo! Has conseguido las ocho estrellas tú solito. ¡Dino está súper orgulloso de ti!", 0.95);
+            return;
+        }
+
+        // Pasar automáticamente a la siguiente palabra para que juegue solo sin tocar nada
+        if (autoPlayMode) {
+            const nextIdx = starsEarned.findIndex((done, i) => !done && i > currentIdx);
+            const fallbackIdx = starsEarned.findIndex(done => !done);
+            const target = nextIdx !== -1 ? nextIdx : fallbackIdx;
+            setTimeout(() => loadWordCard(target, true), 700);
+        }
+    }
+
+    function toggleAutoPlay() {
+        autoPlayMode = !autoPlayMode;
+        const btn = document.getElementById('auto-toggle-btn');
+        if (autoPlayMode) {
+            btn.textContent = '🤖 Juego Solo: ACTIVADO';
+            btn.classList.add('active-mode');
+        } else {
+            btn.textContent = '🤖 Juego Solo: PAUSADO';
+            btn.classList.remove('active-mode');
+        }
+    }
+
+    function restartWholeGame() {
+        starsEarned.fill(false);
+        document.getElementById('win-modal').style.display = 'none';
+        loadWordCard(0, true);
+    }
+
+    // Efectos de sonido sintetizados
+    function playTone(type) {
+        try {
+            if (!audioCtx && AudioContextClass) audioCtx = new AudioContextClass();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            if (type === 'pop') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.frequency.setValueAtTime(240, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.11);
+                gain.gain.setValueAtTime(0.22, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.11);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.11);
+            } else if (type === 'ding') {
+                [523.25, 659.25, 783.99, 1046.5].forEach((f, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(f, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0.2, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.32);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.32);
+                });
+            } else if (type === 'boing') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.linearRampToValueAtTime(190, now + 0.25);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+        } catch (e) {}
+    }
+
+    // Confeti visual de recompensa
+    function fireConfetti() {
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const pieces = Array.from({ length: 55 }, () => ({
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            vx: (Math.random() - 0.5) * 16,
+            vy: (Math.random() - 0.8) * 16,
+            size: Math.random() * 10 + 6,
+            color: ['#FF595E', '#FFCA3A', '#8AC926', '#1982C4', '#6A4C93'][Math.floor(Math.random() * 5)]
+        }));
+
+        let frame = 0;
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            pieces.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.45;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+            });
+            frame++;
+            if (frame < 50) requestAnimationFrame(draw);
+            else ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        draw();
+    }
+
+    window.onload = () => {
+        renderTopStars();
+        renderBottomDock();
+        loadBestSpanishVoices();
+    };
+</script>
+
+</body>
+</html>
