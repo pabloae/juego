@@ -1,7 +1,7 @@
 {
   "name": "La Isla Mágica de Guillermo",
   "short_name": "Isla de la P",
-  "description": "Juego logopédico interactivo para practicar el fonema P con Dino.",
+  "description": "Juego logopédico interactivo con 5 modos clínicos auditados y corregidos.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

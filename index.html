@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Isla de la P">
-        <meta name="theme-color" content="#6A4C93">
+    <meta name="theme-color" content="#6A4C93">
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
@@ -35,19 +35,18 @@
 
         body {
             margin: 0;
-            padding: 8px;
+            padding: 6px;
             background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow-x: hidden;
             color: var(--dark);
             touch-action: manipulation;
         }
 
-        /* Pantalla de Bienvenida / Desbloqueo para que juegue solo */
         #start-overlay {
             position: fixed;
             inset: 0;
@@ -56,14 +55,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 18px;
         }
 
         .start-modal {
             background: #ffffff;
             border-radius: 35px;
-            padding: 30px 25px;
-            max-width: 560px;
+            padding: 24px 22px;
+            max-width: 580px;
             width: 95%;
             text-align: center;
             border: 8px solid var(--warning);
@@ -75,19 +74,19 @@
             color: white;
             border: none;
             border-radius: 28px;
-            padding: 22px 30px;
-            font-size: 2rem;
+            padding: 18px 26px;
+            font-size: 1.75rem;
             font-weight: 900;
             width: 100%;
             box-shadow: 0 10px 0 #04966f;
             cursor: pointer;
-            margin-top: 18px;
+            margin-top: 14px;
             animation: pulseBtn 1.5s infinite;
         }
 
         @keyframes pulseBtn {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.04); }
+            50% { transform: scale(1.03); }
         }
 
         .big-play-btn:active {
@@ -95,35 +94,67 @@
             box-shadow: 0 4px 0 #04966f;
         }
 
-        /* Contenedor Principal */
         #game-shell {
-            width: 98%;
-            max-width: 920px;
+            width: 99%;
+            max-width: 980px;
             background: #FFFFFF;
-            border-radius: 32px;
-            padding: 16px 22px;
+            border-radius: 28px;
+            padding: 12px 18px;
             box-shadow: 0 16px 40px rgba(0,0,0,0.22), inset 0 0 0 7px var(--warning);
             position: relative;
             z-index: 2;
         }
 
-        /* Barra Superior: Progreso + Modo Autónomo + Selector de Voz */
+        .mode-tabs {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mode-tab {
+            flex: 1;
+            min-width: 135px;
+            background: #E9ECEF;
+            border: 3px solid #CED4DA;
+            border-radius: 16px;
+            padding: 8px 8px;
+            font-size: 0.94rem;
+            font-weight: 900;
+            color: #495057;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .mode-tab.active-tab {
+            background: var(--purple);
+            color: white;
+            border-color: #4A306D;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 0 #4A306D;
+        }
+
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: #F1FAEE;
-            padding: 10px 16px;
-            border-radius: 20px;
-            margin-bottom: 12px;
+            padding: 6px 12px;
+            border-radius: 16px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
             gap: 8px;
         }
 
         .stars-row {
             display: flex;
-            gap: 6px;
-            font-size: 1.75rem;
+            gap: 5px;
+            font-size: 1.55rem;
         }
 
         .star-icon {
@@ -133,53 +164,38 @@
 
         .star-icon.won {
             filter: grayscale(0%) opacity(1);
-            transform: scale(1.25) rotate(10deg);
-        }
-
-        .top-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
+            transform: scale(1.22) rotate(10deg);
         }
 
         .badge-btn {
-            background: #E0FBFC;
-            border: 2px solid #98C1D9;
-            color: var(--dark);
-            padding: 6px 12px;
-            border-radius: 14px;
-            font-size: 0.9rem;
+            background: #D8F3DC;
+            border: 2px solid #40916C;
+            color: #1B4332;
+            padding: 5px 11px;
+            border-radius: 12px;
+            font-size: 0.86rem;
             font-weight: bold;
             cursor: pointer;
         }
 
-        .badge-btn.active-mode {
-            background: #D8F3DC;
-            border-color: #40916C;
-            color: #1B4332;
-        }
-
-        /* Escenario Principal Dividido: Mascota + Tarjeta Palabra */
         .main-stage {
             display: grid;
-            grid-template-columns: 250px 1fr;
-            gap: 16px;
+            grid-template-columns: 220px 1fr;
+            gap: 12px;
             align-items: stretch;
         }
 
-        @media (max-width: 700px) {
+        @media (max-width: 720px) {
             .main-stage {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Panel Izquierdo: Mascota Dino + Boca Animada + Medidor de Voz */
         .mascot-panel {
             background: linear-gradient(160deg, #FFF3B0 0%, #FFEA85 100%);
             border: 4px solid #FF9F1C;
-            border-radius: 26px;
-            padding: 14px;
+            border-radius: 22px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -188,7 +204,7 @@
         }
 
         .dino-avatar {
-            font-size: 4.5rem;
+            font-size: 3.9rem;
             line-height: 1;
             filter: drop-shadow(0 6px 8px rgba(0,0,0,0.15));
             transition: transform 0.3s;
@@ -203,20 +219,19 @@
             to { transform: translateY(-10px) rotate(4deg); }
         }
 
-        /* Boca Didáctica para el fonema /P/ */
         .lip-helper {
             background: #ffffff;
-            border-radius: 20px;
-            padding: 10px;
+            border-radius: 16px;
+            padding: 7px;
             width: 100%;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            margin: 8px 0;
+            margin: 5px 0;
         }
 
         .mouth-svg-wrap {
-            width: 90px;
-            height: 54px;
-            margin: 0 auto 4px;
+            width: 82px;
+            height: 46px;
+            margin: 0 auto 3px;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -225,8 +240,8 @@
         }
 
         .lip-upper, .lip-lower {
-            width: 72px;
-            height: 17px;
+            width: 64px;
+            height: 15px;
             background: #E63946;
             border-radius: 20px;
             transition: transform 0.2s ease;
@@ -250,12 +265,11 @@
             100% { transform: translateY(-4px); }
         }
 
-        /* Medidor de Volumen en Vivo del Micrófono */
         .mic-meter-box {
             width: 100%;
             background: #fff;
-            border-radius: 16px;
-            padding: 8px 10px;
+            border-radius: 14px;
+            padding: 6px 8px;
             border: 2px solid #ccc;
         }
 
@@ -263,25 +277,24 @@
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            gap: 5px;
-            height: 32px;
-            margin-top: 4px;
+            gap: 4px;
+            height: 26px;
+            margin-top: 3px;
         }
 
         .m-bar {
-            width: 10px;
+            width: 8px;
             height: 6px;
             background: #06D6A0;
             border-radius: 5px;
             transition: height 0.08s ease, background 0.1s;
         }
 
-        /* Panel Derecho: Objeto, Sílabas y Reconocimiento */
         .word-panel {
             background: linear-gradient(145deg, #F8F9FA, #E9ECEF);
             border: 4px solid var(--secondary);
-            border-radius: 26px;
-            padding: 16px;
+            border-radius: 22px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -289,36 +302,63 @@
             position: relative;
         }
 
+        .articulatory-sequence {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #FFF8E7;
+            border: 2px dashed #F77F00;
+            border-radius: 14px;
+            padding: 5px 12px;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .gesture-step {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 10px;
+            background: white;
+            border: 2px solid #ddd;
+            transition: all 0.25s;
+        }
+
+        .gesture-step.active-gesture {
+            background: var(--warning);
+            border-color: #D62828;
+            transform: scale(1.08);
+        }
+
         .picture-frame {
-            font-size: 7.2rem;
+            font-size: 6rem;
             line-height: 1.05;
             cursor: pointer;
             filter: drop-shadow(0 10px 14px rgba(0,0,0,0.16));
             transition: transform 0.25s;
-            margin: 4px 0;
-        }
-
-        .picture-frame:active {
-            transform: scale(0.92);
+            margin: 2px 0;
         }
 
         .syllable-row {
             display: flex;
-            gap: 14px;
+            gap: 10px;
             justify-content: center;
             flex-wrap: wrap;
-            margin: 10px 0;
+            margin: 6px 0;
         }
 
         .syl-card {
-            font-size: 2.6rem;
+            font-size: 2.2rem;
             font-weight: 900;
-            padding: 8px 26px;
-            border-radius: 22px;
+            padding: 5px 20px;
+            border-radius: 18px;
             background: #ffffff;
             color: var(--dark);
             border: 4px solid #CED4DA;
-            box-shadow: 0 7px 0 #ADB5BD;
+            box-shadow: 0 5px 0 #ADB5BD;
             transition: all 0.22s ease;
         }
 
@@ -328,23 +368,228 @@
 
         .syl-card.initial-p .highlight-p {
             color: var(--primary);
-            font-size: 3rem;
+            font-size: 2.55rem;
             text-decoration: underline;
         }
 
         .syl-card.lit {
             background: var(--warning);
             border-color: #F77F00;
-            transform: translateY(-10px) scale(1.14);
-            box-shadow: 0 14px 22px rgba(247, 127, 0, 0.35), 0 7px 0 #D62828;
+            transform: translateY(-7px) scale(1.1);
+            box-shadow: 0 12px 18px rgba(247, 127, 0, 0.35), 0 5px 0 #D62828;
         }
 
-        /* Zona de Feedback de Reconocimiento de Voz */
+        /* Modo 2: Detective de Pares Mínimos */
+        .pairs-grid {
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            width: 100%;
+            margin: 6px 0;
+        }
+
+        .pair-option {
+            background: white;
+            border: 4px solid #ADB5BD;
+            border-radius: 22px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 6px 0 #CED4DA;
+        }
+
+        .pair-option.target-pair {
+            border-color: var(--primary);
+            background: #FFF9FA;
+        }
+
+        .pair-option.heard-wrong-shake {
+            background: #FFE5EC;
+            border-color: #D62828;
+            animation: shakeCard 0.5s ease;
+        }
+
+        @keyframes shakeCard {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Modo 3: Tren Constructor de Frases */
+        .sentence-train {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+            margin: 6px 0;
+        }
+
+        .train-wagon {
+            background: white;
+            border: 4px solid var(--secondary);
+            border-radius: 18px;
+            padding: 8px 6px;
+            text-align: center;
+            box-shadow: 0 5px 0 #98C1D9;
+            transition: all 0.25s;
+        }
+
+        .train-wagon.lit-wagon {
+            background: var(--warning);
+            border-color: #D62828;
+            transform: translateY(-7px) scale(1.05);
+        }
+
+        .wagon-emoji {
+            font-size: 3.1rem;
+            line-height: 1.1;
+        }
+
+        .wagon-word {
+            font-size: 1.25rem;
+            font-weight: 900;
+            margin-top: 4px;
+        }
+
+        /* Modo 4: Cazador de Errores (Profesor de Dino) */
+        .hunter-stage {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin: 4px 0;
+        }
+
+        .dino-claim-bubble {
+            background: #FFF3B0;
+            border: 4px solid #F77F00;
+            border-radius: 22px;
+            padding: 10px 18px;
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: var(--dark);
+            margin: 6px 0 10px;
+            box-shadow: 0 5px 0 #F77F00;
+            text-align: center;
+            width: 96%;
+        }
+
+        .judge-buttons {
+            display: flex;
+            gap: 14px;
+            width: 100%;
+            justify-content: center;
+            margin: 4px 0;
+        }
+
+        .judge-btn {
+            flex: 1;
+            max-width: 260px;
+            border: none;
+            border-radius: 22px;
+            padding: 14px 12px;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            transition: transform 0.12s;
+        }
+
+        .judge-btn:active {
+            transform: translateY(5px);
+        }
+
+        .judge-ok {
+            background: #06D6A0;
+            box-shadow: 0 7px 0 #048C68;
+        }
+
+        .judge-trap {
+            background: #FF595E;
+            box-shadow: 0 7px 0 #B81D24;
+        }
+
+        /* Modo 5: Lámina Interactiva "¿Qué pasa en la foto?" */
+        .scene-stage {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            margin: 4px 0;
+        }
+
+        .scene-canvas-box {
+            width: 100%;
+            background: linear-gradient(180deg, #90E0EF 0%, #CAF0F8 52%, #95D5B2 52%, #74C69D 100%);
+            border: 4px solid #2D6A4F;
+            border-radius: 22px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            position: relative;
+            min-height: 190px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 680px) {
+            .scene-canvas-box {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .scene-hotspot.active-target-spot {
+            border: 4px solid #FF595E;
+            background: #FFF0F3;
+            transform: scale(1.06);
+            box-shadow: 0 0 14px rgba(255, 89, 94, 0.55);
+        }
+
+        .scene-hotspot {
+            background: rgba(255, 255, 255, 0.88);
+            border: 3px dashed #1982C4;
+            border-radius: 18px;
+            padding: 8px 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .scene-hotspot.found-object {
+            background: #FFF3B0;
+            border: 4px solid #06D6A0;
+            transform: scale(1.12) rotate(-3deg);
+            box-shadow: 0 10px 20px rgba(6, 214, 160, 0.45);
+        }
+
+        .hotspot-emoji {
+            font-size: 3.3rem;
+            line-height: 1.05;
+        }
+
+        .hotspot-label {
+            font-size: 1.05rem;
+            font-weight: 900;
+            color: var(--dark);
+            margin-top: 3px;
+        }
+
+        .hotspot-action-hint {
+            font-size: 0.78rem;
+            color: #495057;
+            font-weight: bold;
+        }
+
         .recognition-box {
             width: 100%;
-            min-height: 92px;
-            border-radius: 20px;
-            padding: 12px 16px;
+            min-height: 82px;
+            border-radius: 18px;
+            padding: 9px 14px;
             background: #EBF5FF;
             border: 3px solid #90E0EF;
             display: flex;
@@ -373,32 +618,32 @@
 
         @keyframes glowMic {
             0% { box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.6); }
-            70% { box-shadow: 0 0 0 18px rgba(6, 214, 160, 0); }
+            70% { box-shadow: 0 0 0 15px rgba(6, 214, 160, 0); }
             100% { box-shadow: 0 0 0 0 rgba(6, 214, 160, 0); }
         }
 
         .prompt-title {
-            font-size: 1.35rem;
+            font-size: 1.2rem;
             font-weight: 900;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .heard-bubble {
-            font-size: 1.05rem;
+            font-size: 0.96rem;
             color: #495057;
-            background: rgba(255,255,255,0.85);
-            padding: 4px 14px;
+            background: rgba(255,255,255,0.88);
+            padding: 3px 12px;
             border-radius: 12px;
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
         .timer-bar-wrap {
             width: 90%;
-            height: 16px;
+            height: 12px;
             background: #DEE2E6;
             border-radius: 10px;
             overflow: hidden;
-            margin-top: 8px;
+            margin-top: 6px;
             display: none;
         }
 
@@ -409,27 +654,26 @@
             transition: width 0.1s linear;
         }
 
-        /* Botones Grandes para que Guillermo toque solo */
         .kid-actions {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             width: 100%;
             justify-content: center;
-            margin-top: 12px;
+            margin-top: 8px;
             flex-wrap: wrap;
         }
 
         .kid-btn {
             border: none;
-            border-radius: 22px;
-            padding: 14px 22px;
-            font-size: 1.25rem;
+            border-radius: 18px;
+            padding: 10px 18px;
+            font-size: 1.1rem;
             font-weight: 900;
             color: white;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: transform 0.1s;
         }
 
@@ -441,48 +685,36 @@
             opacity: 0.45;
         }
 
-        .btn-repeat-audio {
-            background: #1982C4;
-            box-shadow: 0 6px 0 #0F4C75;
-        }
+        .btn-repeat-audio { background: #1982C4; box-shadow: 0 5px 0 #0F4C75; }
+        .btn-turtle { background: #F77F00; box-shadow: 0 5px 0 #AC5800; }
+        .btn-manual-ok { background: #06D6A0; box-shadow: 0 5px 0 #048C68; }
 
-        .btn-turtle {
-            background: #F77F00;
-            box-shadow: 0 6px 0 #AC5800;
-        }
-
-        .btn-manual-ok {
-            background: #06D6A0;
-            box-shadow: 0 6px 0 #048C68;
-        }
-
-        /* Carrusel inferior de las 8 palabras */
         .words-dock {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin-top: 14px;
+            gap: 6px;
+            margin-top: 10px;
             flex-wrap: wrap;
         }
 
         .dock-item {
             background: #F8F9FA;
             border: 3px solid #DEE2E6;
-            border-radius: 16px;
-            padding: 6px 12px;
-            font-size: 1.05rem;
+            border-radius: 14px;
+            padding: 4px 10px;
+            font-size: 0.92rem;
             font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             transition: all 0.2s;
         }
 
         .dock-item.current {
             border-color: var(--primary);
             background: #FFF0F3;
-            transform: scale(1.08);
+            transform: scale(1.06);
         }
 
         .dock-item.completed {
@@ -490,7 +722,6 @@
             border-color: #52B788;
         }
 
-        /* Confeti Canvas */
         #confetti-canvas {
             position: fixed;
             inset: 0;
@@ -498,8 +729,7 @@
             z-index: 900;
         }
 
-        /* Modal de Ajustes de Voz Neural / Edge / iPad */
-        #voice-modal, #win-modal {
+        #win-modal {
             display: none;
             position: fixed;
             inset: 0;
@@ -519,60 +749,65 @@
             border: 6px solid var(--warning);
             text-align: center;
         }
-
-        select.voice-select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 14px;
-            border: 2px solid var(--secondary);
-            font-size: 1.05rem;
-            margin: 12px 0;
-        }
     </style>
 </head>
 <body>
 
 <canvas id="confetti-canvas"></canvas>
 
-<!-- Pantalla de Inicio para que Guillermo pulse y active Voz + Micrófono -->
+<!-- Pantalla de Inicio -->
 <div id="start-overlay">
     <div class="start-modal">
-        <div style="font-size: 4.8rem;">🦖🎤🏝️</div>
-        <h1 style="color: var(--purple); margin: 8px 0; font-size: 2.1rem;">¡La Isla de Dino y Guillermo!</h1>
-        <p style="font-size: 1.2rem; color: #333; line-height: 1.4;">
-            Dino te dirá una palabra mágica con la <strong>P</strong>.<br>
-            ¡Luego <strong>habla tú al iPad</strong> para que Dino te escuche solito!
+        <div style="font-size: 4.2rem;">🦖🕵️‍♂️🚂🎓🏞️</div>
+        <h1 style="color: var(--purple); margin: 6px 0; font-size: 1.95rem;">¡La Súper Isla de Guillermo!</h1>
+        <p style="font-size: 1.08rem; color: #333; line-height: 1.4; text-align:left; background:#F8F9FA; padding:12px 16px; border-radius:18px;">
+            👄 <strong>1. Palabras P:</strong> Juntar labios y sílabas.<br>
+            🕵️‍♂️ <strong>2. Detective:</strong> Pato vs Gato.<br>
+            🚂 <strong>3. Tren de Frases:</strong> Hablar despacio.<br>
+            🎓 <strong>4. Profesor de Dino:</strong> ¡Pilla a Dino si se equivoca!<br>
+            🏞️ <strong>5. ¿Qué pasa en la foto?:</strong> Cuenta tu historia libre.
         </p>
         <button class="big-play-btn" onclick="initializeAutonomousGame()">
-            🚀 ¡EMPEZAR A JUGAR SOLO!
+            🚀 ¡EMPEZAR A JUGAR!
         </button>
-        <p style="font-size: 0.9rem; color: #666; margin-top: 14px;">
-            🔒 Al pulsar, acepta el permiso del <strong>Micrófono</strong> para que el juego evalúe la pronunciación de Guillermo automáticamente.
-        </p>
     </div>
 </div>
 
 <div id="game-shell">
+    <!-- Selector de los 5 Modos Terapéuticos -->
+    <div class="mode-tabs">
+        <button class="mode-tab active-tab" id="tab-words" onclick="switchGameMode('words')">
+            👄 1. Palabras
+        </button>
+        <button class="mode-tab" id="tab-detective" onclick="switchGameMode('detective')">
+            🕵️‍♂️ 2. Detective
+        </button>
+        <button class="mode-tab" id="tab-sentences" onclick="switchGameMode('sentences')">
+            🚂 3. Frases
+        </button>
+        <button class="mode-tab" id="tab-hunter" onclick="switchGameMode('hunter')">
+            🎓 4. Profe Dino
+        </button>
+        <button class="mode-tab" id="tab-scene" onclick="switchGameMode('scene')">
+            🏞️ 5. La Foto
+        </button>
+    </div>
+
     <!-- Barra Superior -->
     <div class="top-bar">
         <div class="stars-row" id="stars-row"></div>
-        <div class="top-controls">
-            <button class="badge-btn active-mode" id="auto-toggle-btn" onclick="toggleAutoPlay()">
-                🤖 Juego Solo: ACTIVADO
-            </button>
-            <button class="badge-btn" onclick="openVoiceModal()">
-                🗣️ Voz Natural (<span id="current-voice-label">Auto</span>)
-            </button>
-        </div>
+        <button class="badge-btn" id="auto-toggle-btn" onclick="toggleAutoPlay()">
+            🤖 Juego Solo: ACTIVADO
+        </button>
     </div>
 
     <!-- Escenario Principal -->
     <div class="main-stage">
-        <!-- Columna Izquierda: Dino + Labios + Micrófono en vivo -->
+        <!-- Columna Izquierda: Dino + Labios + Micrófono -->
         <div class="mascot-panel">
             <div>
                 <div class="dino-avatar" id="dino-avatar">🦖</div>
-                <div style="font-weight: 900; color: #7F4F24; font-size: 1.05rem; margin-top: 4px;" id="dino-speech">
+                <div style="font-weight: 900; color: #7F4F24; font-size: 0.98rem; margin-top: 3px;" id="dino-speech">
                     ¡Hola Guillermo!
                 </div>
             </div>
@@ -582,13 +817,13 @@
                     <div class="lip-upper"></div>
                     <div class="lip-lower"></div>
                 </div>
-                <div style="font-size: 0.95rem; font-weight: bold; color: #D62828;">
-                    ¡Junta los 2 labios: P-P-P!
+                <div style="font-size: 0.88rem; font-weight: bold; color: #D62828;">
+                    ¡Labios juntos: P-P-P!
                 </div>
             </div>
 
             <div class="mic-meter-box">
-                <div style="font-size: 0.85rem; font-weight: bold; color: #555;" id="mic-status-label">
+                <div style="font-size: 0.8rem; font-weight: bold; color: #555;" id="mic-status-label">
                     🎙️ Nivel de tu voz
                 </div>
                 <div class="mic-bars" id="mic-bars">
@@ -603,153 +838,473 @@
             </div>
         </div>
 
-        <!-- Columna Derecha: Dibujo, Sílabas y Evaluador Fonológico -->
+        <!-- Columna Derecha: Área Dinámica según el Modo -->
         <div class="word-panel">
-            <div class="picture-frame" id="picture-frame" onclick="runWordCycle(false)">
-                🦃
+            <!-- Pista de Secuencia Articulatoria (Evita Asimilaciones C1 -> C2) -->
+            <div class="articulatory-sequence" id="articulatory-sequence">
+                <div class="gesture-step" id="gest-1">👄 1º Labios (P)</div>
+                <span>&rarr;</span>
+                <div class="gesture-step" id="gest-2">👅 2º Lengua arriba</div>
             </div>
 
-            <div class="syllable-row" id="syllable-row"></div>
+            <!-- Vista Modo 1: Palabra Individual -->
+            <div id="view-words" style="width:100%; text-align:center;">
+                <div class="picture-frame" id="picture-frame" onclick="runCurrentModeCycle(false)">🦃</div>
+                <div class="syllable-row" id="syllable-row"></div>
+            </div>
+
+            <!-- Vista Modo 2: Detective de Pares Mínimos -->
+            <div class="pairs-grid" id="view-detective">
+                <div class="pair-option target-pair" id="pair-left" onclick="runCurrentModeCycle(false)">
+                    <div style="font-size: 4.5rem;" id="pair-target-emoji">🦆</div>
+                    <div style="font-size: 1.8rem; font-weight: 900; color: var(--primary);" id="pair-target-word">PATO</div>
+                    <div style="font-size: 0.88rem; color: #2B9348; font-weight: bold;">👄 Con los Labios (P)</div>
+                </div>
+                <div class="pair-option" id="pair-right" onclick="explainFoilCard()">
+                    <div style="font-size: 4.5rem;" id="pair-foil-emoji">🐱</div>
+                    <div style="font-size: 1.8rem; font-weight: 900; color: #6C757D;" id="pair-foil-word">GATO</div>
+                    <div style="font-size: 0.88rem; color: #D62828; font-weight: bold;" id="pair-foil-cue">🦁 Con la Garganta (G/K)</div>
+                </div>
+            </div>
+
+            <!-- Vista Modo 3: Tren Constructor de Frases -->
+            <div class="sentence-train" id="view-sentences">
+                <div class="train-wagon" id="wagon-0">
+                    <div class="wagon-emoji" id="w-emoji-0">🦆</div>
+                    <div class="wagon-word" id="w-text-0">EL PATO</div>
+                </div>
+                <div class="train-wagon" id="wagon-1">
+                    <div class="wagon-emoji" id="w-emoji-1">😋</div>
+                    <div class="wagon-word" id="w-text-1">COME</div>
+                </div>
+                <div class="train-wagon" id="wagon-2">
+                    <div class="wagon-emoji" id="w-emoji-2">🍧</div>
+                    <div class="wagon-word" id="w-text-2">UN POLO</div>
+                </div>
+            </div>
+
+            <!-- Vista Modo 4: Cazador de Errores (Profesor de Dino) -->
+            <div class="hunter-stage" id="view-hunter">
+                <div class="picture-frame" id="hunter-emoji" onclick="runCurrentModeCycle(false)" style="font-size:5.2rem;">🐦</div>
+                <div class="dino-claim-bubble" id="hunter-bubble">
+                    👂 Escucha con atención a Dino...
+                </div>
+                <div class="judge-buttons" id="judge-buttons">
+                    <button class="judge-btn judge-ok" onclick="handleJudgeChoice(true)">
+                        <span style="font-size:2rem;">✅</span>
+                        <span>¡Lo dijo BIEN! (con P)</span>
+                    </button>
+                    <button class="judge-btn judge-trap" onclick="handleJudgeChoice(false)">
+                        <span style="font-size:2rem;">🚨</span>
+                        <span>¡TRAMPA! (se equivocó)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Vista Modo 5: Lámina Interactiva "¿Qué pasa en la foto?" -->
+            <div class="scene-stage" id="view-scene">
+                <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:6px; padding:0 4px; flex-wrap:wrap; gap:6px;">
+                    <div style="font-size:0.98rem; font-weight:900; color:#1D3557;" id="scene-title-bar">
+                        🏞️ Nombra los 5 dibujos con P de la foto:
+                    </div>
+                    <div id="scene-counter-badge" style="background:#6A4C93; color:white; padding:4px 12px; border-radius:14px; font-weight:900; font-size:0.9rem;">
+                        🔍 0 / 5 palabras
+                    </div>
+                </div>
+                <div class="scene-canvas-box" id="scene-canvas-box"></div>
+            </div>
 
             <!-- Evaluador Inteligente -->
             <div class="recognition-box" id="recognition-box">
-                <div class="prompt-title" id="prompt-title">
-                    👂 Preparando palabra...
-                </div>
-                <div class="heard-bubble" id="heard-bubble">
-                    Dino te escuchará cuando salga el micrófono verde
-                </div>
+                <div class="prompt-title" id="prompt-title">👂 Preparando juego...</div>
+                <div class="heard-bubble" id="heard-bubble">Dino te escuchará cuando salga el micrófono verde</div>
                 <div class="timer-bar-wrap" id="timer-bar-wrap">
                     <div class="timer-bar-fill" id="timer-bar-fill"></div>
                 </div>
             </div>
 
-            <!-- Botones de apoyo -->
+            <!-- Botones de acción -->
             <div class="kid-actions">
-                <button class="kid-btn btn-repeat-audio" id="btn-repeat" onclick="runWordCycle(false)">
+                <button class="kid-btn btn-repeat-audio" id="btn-repeat" onclick="onRepeatButtonClick(false)">
                     🔊 Escuchar
                 </button>
-                <button class="kid-btn btn-turtle" id="btn-slow" onclick="runWordCycle(true)">
+                <button class="kid-btn btn-turtle" id="btn-slow" onclick="onRepeatButtonClick(true)">
                     🐢 Despacito
                 </button>
                 <button class="kid-btn btn-manual-ok" id="btn-skip" onclick="handleSuccess(true)">
-                    ⭐ ¡Ya lo dije!
+                    ⭐ ¡Lo dije bien!
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Selector de las 8 palabras -->
+    <!-- Carrusel inferior -->
     <div class="words-dock" id="words-dock"></div>
-</div>
-
-<!-- Modal Selector de Voz Natural (Edge Neural / Siri Premium) -->
-<div id="voice-modal">
-    <div class="modal-box">
-        <h2 style="margin-top:0; color: var(--purple);">🗣️ Configurar Voz Natural</h2>
-        <p style="font-size: 0.98rem; text-align: left; line-height: 1.45; background: #F8F9FA; padding: 12px; border-radius: 14px;">
-            💡 <strong>Truco para tener la voz neuronal humana de Microsoft Edge o Apple:</strong><br>
-            • Si abres este archivo en la app gratuita <strong>Microsoft Edge</strong> (en PC, Mac o iPad), selecciona aquí abajo la voz <strong>"Microsoft Alvaro Online (Natural)"</strong> o <strong>"Microsoft Elvira Online (Natural)"</strong>.<br>
-            • Si juegas en <strong>Safari del iPad</strong>, elige <strong>"Mónica (Mejorada)"</strong>, <strong>"Marisol (Premium)"</strong> o <strong>"Siri"</strong> (puedes descargarlas gratis en <em>Ajustes del iPad &rarr; Accesibilidad &rarr; Contenido leído &rarr; Voces &rarr; Español</em>).
-        </p>
-        <select id="voice-select" class="voice-select" onchange="changeSelectedVoice()"></select>
-        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 12px;">
-            <button class="kid-btn btn-repeat-audio" onclick="testCurrentVoice()">🔊 Probar Voz</button>
-            <button class="kid-btn btn-manual-ok" onclick="closeVoiceModal()">✅ Guardar</button>
-        </div>
-    </div>
 </div>
 
 <!-- Modal de Victoria -->
 <div id="win-modal">
     <div class="modal-box">
-        <div style="font-size: 4.8rem;">🏆🦖🐸🌟</div>
-        <h1 style="color: var(--purple); margin: 8px 0;">¡LO HICISTE TÚ SOLITO, GUILLERMO!</h1>
-        <p style="font-size: 1.2rem;">
-            ¡Dino y la rana están súper contentos! Has dicho las 8 palabras juntando los labios en la <strong>P</strong>.
+        <div style="font-size: 4.5rem;">🏆🦖🐸🌟</div>
+        <h1 style="color: var(--purple); margin: 8px 0;">¡SÚPER CAMPEÓN GUILLERMO!</h1>
+        <p style="font-size: 1.15rem;" id="win-message-text">
+            ¡Has completado todas las estrellas de este modo!
         </p>
-        <button class="big-play-btn" onclick="restartWholeGame()">
-            🔄 ¡JUGAR OTRA VEZ!
-        </button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:15px;">
+            <button class="kid-btn btn-repeat-audio" onclick="nextModeFromWin()">🚀 Ir al Siguiente Modo</button>
+            <button class="kid-btn btn-manual-ok" onclick="restartCurrentMode()">🔄 Repetir este Modo</button>
+        </div>
     </div>
 </div>
 
 <script>
-    // Diccionario fonológico con detector específico de las confusiones de Guillermo (/k/, /t/, /b/, /g/, /f/ por /p/)
+    // Función auxiliar para quitar tildes y signos al comparar voz
+    function normalizeStr(str) {
+        return (str || "")
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-zñ\s]/g, "")
+            .trim();
+    }
+
+    // MODO 1 y 2: Las 8 palabras pautadas por el logopeda con listas exhaustivas de trampas y aciertos
     const wordsList = [
         {
-            word: "pavo",
-            syllables: ["PA", "VO"],
-            ttsSyllables: ["pa", "bo"],
-            emoji: "🦃",
-            validMatches: ["pavo", "pabo", "pabos", "pavos", "pago"],
-            velarDentalTraps: ["cabo", "cavo", "kabo", "tabo", "tavo", "babo", "vavo", "gabo", "favo"]
+            word: "pavo", syllables: ["PA", "VO"], ttsSyllables: ["pa", "bo"], emoji: "🦃",
+            c2Cue: "👄 2º Labios suaves (V)",
+            validMatches: ["pavo", "pabo", "pabos", "pavos", "pago", "paco", "papo", "paro", "pato"],
+            velarDentalTraps: ["cabo", "cavo", "kabo", "tabo", "tavo", "babo", "vavo", "gabo", "favo", "nabo", "rabo", "sapo", "chavo"],
+            foilWord: "CABO", foilEmoji: "🪢", foilCue: "🦁 Garganta (K)"
         },
         {
-            word: "pato",
-            syllables: ["PA", "TO"],
-            ttsSyllables: ["pa", "to"],
-            emoji: "🦆",
-            validMatches: ["pato", "patos", "pacto", "parto"],
-            velarDentalTraps: ["tato", "cato", "gato", "kato", "bato", "chato", "dato"]
+            word: "pato", syllables: ["PA", "TO"], ttsSyllables: ["pa", "to"], emoji: "🦆",
+            c2Cue: "🔔 2º Lengua en dientes (T)",
+            validMatches: ["pato", "patos", "pacto", "parto", "patito", "patitos", "paco", "paso", "palo"],
+            velarDentalTraps: ["tato", "cato", "gato", "kato", "bato", "chato", "dato", "rato", "mato", "nato", "plato", "zapato", "gatos", "tacos", "taco"],
+            foilWord: "GATO", foilEmoji: "🐱", foilCue: "🦁 Garganta (G/K)"
         },
         {
-            word: "pollo",
-            syllables: ["PO", "LLO"],
-            ttsSyllables: ["po", "yo"],
-            emoji: "🐥",
-            validMatches: ["pollo", "poyo", "pollos", "poyos", "polo", "poho"],
-            velarDentalTraps: ["collo", "coyo", "tollo", "toyo", "bollo", "boyo", "gollo", "koyo"]
+            word: "pollo", syllables: ["PO", "LLO"], ttsSyllables: ["po", "yo"], emoji: "🐥",
+            c2Cue: "🐍 2º Lengua al paladar (LL)",
+            validMatches: ["pollo", "poyo", "pollos", "poyos", "pollito", "pollitos", "polo", "poho", "poro", "poco", "pozo"],
+            velarDentalTraps: ["collo", "coyo", "tollo", "toyo", "bollo", "boyo", "gollo", "koyo", "rollo", "hoyo", "chollo", "pollo no", "gallo", "callo", "tallo", "caballo"],
+            foilWord: "BOLLO", foilEmoji: "🥐", foilCue: "🐝 Sin explosión (B)"
         },
         {
-            word: "pelo",
-            syllables: ["PE", "LO"],
-            ttsSyllables: ["pe", "lo"],
-            emoji: "💇‍♂️",
-            validMatches: ["pelo", "pelos", "pero", "pedo"],
-            velarDentalTraps: ["telo", "celo", "kelo", "belo", "velo", "gelo", "ielo"]
+            word: "pelo", syllables: ["PE", "LO"], ttsSyllables: ["pe", "lo"], emoji: "💇‍♂️",
+            c2Cue: "👅 2º Lengua arriba (L)",
+            validMatches: ["pelo", "pelos", "pelito", "pero", "pedo", "perro", "pego", "peso", "peco"],
+            velarDentalTraps: ["telo", "celo", "kelo", "belo", "velo", "gelo", "ielo", "hielo", "cielo", "suelo", "abuelo", "dedo", "cero", "terro"],
+            foilWord: "CELO", foilEmoji: "🩹", foilCue: "🐍 Dientes (Z/T)"
         },
         {
-            word: "polo",
-            syllables: ["PO", "LO"],
-            ttsSyllables: ["po", "lo"],
-            emoji: "🍧",
-            validMatches: ["polo", "polos", "poro", "podo", "pollo"],
-            velarDentalTraps: ["colo", "tolo", "bolo", "golo", "kolo", "solo", "dolo"]
+            word: "polo", syllables: ["PO", "LO"], ttsSyllables: ["po", "lo"], emoji: "🍧",
+            c2Cue: "👅 2º Lengua arriba (L)",
+            validMatches: ["polo", "polos", "polito", "poro", "podo", "pollo", "poco", "poso", "pomo"],
+            velarDentalTraps: ["colo", "tolo", "bolo", "golo", "kolo", "solo", "dolo", "lolo", "molo", "coro", "toro", "loro", "todo", "codo", "bodo", "gol"],
+            foilWord: "BOLO", foilEmoji: "🎳", foilCue: "🎳 Suave (B)"
         },
         {
-            word: "pájaro",
-            syllables: ["PÁ", "JA", "RO"],
-            ttsSyllables: ["pa", "ja", "ro"],
-            emoji: "🐦",
-            validMatches: ["pájaro", "pajaro", "pajarito", "pajaritos", "pajaros", "pájaros", "pajado", "pajalo"],
-            velarDentalTraps: ["cajaro", "cájaro", "cajarito", "cajaritos", "tajaro", "tajarito", "bajaro", "gajaro", "kajaro"]
+            word: "pájaro", syllables: ["PÁ", "JA", "RO"], ttsSyllables: ["pa", "ja", "ro"], emoji: "🐦",
+            c2Cue: "🦁 2º Garganta después (J)",
+            validMatches: ["pajaro", "pajarito", "pajaritos", "pajaros", "pajado", "pajalo", "pajaro", "paja", "pasaro", "pararo"],
+            velarDentalTraps: ["cajaro", "cajarito", "cajaritos", "tajaro", "tajarito", "bajaro", "gajaro", "kajaro", "jarro", "carro", "tarro", "barro", "caza", "taza", "caja"],
+            foilWord: "CAJA-RO", foilEmoji: "❌", foilCue: "🚫 ¡Trampa de garganta (K)!"
         },
         {
-            word: "perdiz",
-            syllables: ["PER", "DIZ"],
-            ttsSyllables: ["per", "diz"],
-            emoji: "🐦",
-            validMatches: ["perdiz", "perdi", "perdis", "pediz", "pedi", "perdiz", "feliz", "perdí"],
-            velarDentalTraps: ["terdiz", "cerdiz", "kerdiz", "berdiz", "terdi", "cerdi", "cardiz"]
+            word: "perdiz", syllables: ["PER", "DIZ"], ttsSyllables: ["per", "diz"], emoji: "🐦",
+            c2Cue: "🔔 2º Lengua en dientes (D)",
+            validMatches: ["perdiz", "perdi", "perdis", "pediz", "pedi", "perdi", "perdices", "pedir", "perfil", "pernil"],
+            velarDentalTraps: ["terdiz", "cerdiz", "kerdiz", "berdiz", "terdi", "cerdi", "cardiz", "tardi", "jardín", "verde", "cerdo", "tarde"],
+            foilWord: "TER-DIZ", foilEmoji: "❌", foilCue: "🚫 ¡Trampa de dientes (T)!"
         },
         {
-            word: "pino",
-            syllables: ["PI", "NO"],
-            ttsSyllables: ["pi", "no"],
-            emoji: "🌲",
-            validMatches: ["pino", "pinos", "pimo", "piro", "pido"],
-            velarDentalTraps: ["tino", "chino", "kino", "vino", "bino", "fino", "dino"]
+            word: "pino", syllables: ["PI", "NO"], ttsSyllables: ["pi", "no"], emoji: "🌲",
+            c2Cue: "👃 2º Lengua arriba (N)",
+            validMatches: ["pino", "pinos", "pinito", "pimo", "piro", "pido", "pico", "piso", "pito"],
+            velarDentalTraps: ["tino", "chino", "kino", "vino", "bino", "fino", "dino", "lino", "mino", "nino", "niño", "primo", "trino"],
+            foilWord: "VINO", foilEmoji: "🍇", foilCue: "🍇 Labio suave (V/B)"
         }
     ];
 
+    // MODO 3: Frases rítmicas completas
+    const sentencesList = [
+        {
+            full: "El pato mira a la rana",
+            wagons: [
+                { emoji: "🦆", text: "EL PATO", tts: "el pato" },
+                { emoji: "👀", text: "MIRA", tts: "mira" },
+                { emoji: "🐸", text: "A LA RANA", tts: "a la rana" }
+            ],
+            targetWord: "pato",
+            firstWords: ["pato", "patos", "patito"],
+            endWords: ["rana", "ranas", "gana", "cana", "nana", "lana"],
+            validMatches: ["pato", "patos"],
+            velarDentalTraps: ["tato", "cato", "gato", "kato", "bato", "chato"]
+        },
+        {
+            full: "El pollo come un polo",
+            wagons: [
+                { emoji: "🐥", text: "EL POLLO", tts: "el pollo" },
+                { emoji: "😋", text: "COME", tts: "come" },
+                { emoji: "🍧", text: "UN POLO", tts: "un polo" }
+            ],
+            targetWord: "pollo y polo",
+            firstWords: ["pollo", "poyo", "pollito"],
+            endWords: ["polo", "polos", "poro", "podo", "poco"],
+            validMatches: ["pollo", "poyo", "polo"],
+            velarDentalTraps: ["collo", "tollo", "colo", "tolo", "bollo", "bolo", "gallo", "toro"]
+        },
+        {
+            full: "El pájaro sube al pino",
+            wagons: [
+                { emoji: "🐦", text: "EL PÁJARO", tts: "el pájaro" },
+                { emoji: "⬆️", text: "SUBE", tts: "sube" },
+                { emoji: "🌲", text: "AL PINO", tts: "al pino" }
+            ],
+            targetWord: "pájaro y pino",
+            firstWords: ["pajaro", "pajarito"],
+            endWords: ["pino", "pinos", "pimo", "piro", "pido", "pico"],
+            validMatches: ["pajaro", "pino"],
+            velarDentalTraps: ["cajaro", "cajarito", "tajaro", "tino", "kino", "vino", "chino"]
+        },
+        {
+            full: "El pavo saluda al dinosaurio",
+            wagons: [
+                { emoji: "🦃", text: "EL PAVO", tts: "el pavo" },
+                { emoji: "👋", text: "SALUDA", tts: "saluda" },
+                { emoji: "🦖", text: "AL DINOSAURIO", tts: "al dinosaurio" }
+            ],
+            targetWord: "pavo",
+            firstWords: ["pavo", "pabo", "pago"],
+            endWords: ["dinosaurio", "dinosaurios", "dino", "saurio"],
+            validMatches: ["pavo", "pabo"],
+            velarDentalTraps: ["cabo", "tabo", "tavo", "babo", "rabo"]
+        },
+        {
+            full: "El pato tiene pelo",
+            wagons: [
+                { emoji: "🦆", text: "EL PATO", tts: "el pato" },
+                { emoji: "✨", text: "TIENE", tts: "tiene" },
+                { emoji: "💇‍♂️", text: "PELO", tts: "pelo" }
+            ],
+            targetWord: "pato y pelo",
+            firstWords: ["pato", "patos"],
+            endWords: ["pelo", "pelos", "pero", "pedo", "perro"],
+            validMatches: ["pato", "pelo"],
+            velarDentalTraps: ["tato", "cato", "gato", "telo", "celo", "belo", "velo", "hielo"]
+        },
+        {
+            full: "La perdiz ve a la rana",
+            wagons: [
+                { emoji: "🐦", text: "LA PERDIZ", tts: "la perdiz" },
+                { emoji: "👀", text: "VE", tts: "ve" },
+                { emoji: "🐸", text: "A LA RANA", tts: "a la rana" }
+            ],
+            targetWord: "perdiz",
+            firstWords: ["perdiz", "perdi", "pediz", "pedir"],
+            endWords: ["rana", "ranas", "gana", "cana"],
+            validMatches: ["perdiz", "perdi"],
+            velarDentalTraps: ["terdiz", "cerdiz", "kerdiz", "verde", "tarde"]
+        }
+    ];
+
+    // MODO 4: Profesor de Dino
+    // CORREGIDO: Usamos sílabas separadas por guiones (ttsPhonetic) para las trampas para que el sintetizador del iPad
+    // pronuncie con total nitidez "TA - TO", "CA - JA - RI - TO", "TE - LO", "BO - LLO" y nunca lo confunda con la palabra con P.
+    let hunterList = [];
+    let hunterSubState = 'judging'; // 'judging' (eligiendo botón verde/rojo) | 'pronouncing' (hablando al micrófono)
+
+    function generateRandomHunterList() {
+        const basePool = [
+            {
+                word: "pájaro", emoji: "🐦",
+                ttsCorrect: "pájaro",
+                traps: [
+                    { display: "CA-JA-RI-TO", tts: "ca, ja, ri, to", cue: "con la garganta (K)" },
+                    { display: "TA-JA-RO", tts: "ta, ja, ro", cue: "con la lengua en los dientes (T)" }
+                ],
+                valid: ["pajaro", "pajarito", "pajaritos", "pajaros", "pajado", "paja"],
+                trapMatches: ["cajaro", "cajarito", "tajaro", "tajarito", "bajaro", "gajaro", "carro", "tarro", "caja", "taza"]
+            },
+            {
+                word: "pato", emoji: "🦆",
+                ttsCorrect: "pato",
+                traps: [
+                    { display: "TA-TO", tts: "ta, to", cue: "con los dientes (T)" },
+                    { display: "GA-TO", tts: "ga, to", cue: "con la garganta (G)" }
+                ],
+                valid: ["pato", "patos", "patito", "pacto", "parto"],
+                trapMatches: ["tato", "cato", "gato", "kato", "bato", "chato", "dato", "rato", "zapato", "plato"]
+            },
+            {
+                word: "pino", emoji: "🌲",
+                ttsCorrect: "pino",
+                traps: [
+                    { display: "TI-NO", tts: "ti, no", cue: "con los dientes (T)" },
+                    { display: "CHI-NO", tts: "chi, no", cue: "sin juntar los labios (CH)" }
+                ],
+                valid: ["pino", "pinos", "pinito", "pimo", "piro", "pido", "pico"],
+                trapMatches: ["tino", "chino", "kino", "vino", "bino", "fino", "dino", "nino", "niño"]
+            },
+            {
+                word: "pelo", emoji: "💇‍♂️",
+                ttsCorrect: "pelo",
+                traps: [
+                    { display: "TE-LO", tts: "te, lo", cue: "con los dientes (T)" },
+                    { display: "CE-LO", tts: "ce, lo", cue: "con la lengua entre los dientes (Z)" }
+                ],
+                valid: ["pelo", "pelos", "pelito", "pero", "pedo", "pego"],
+                trapMatches: ["telo", "celo", "kelo", "belo", "velo", "hielo", "cielo", "suelo", "dedo", "cero"]
+            },
+            {
+                word: "pollo", emoji: "🐥",
+                ttsCorrect: "pollo",
+                traps: [
+                    { display: "CO-LLO", tts: "co, llo", cue: "con la garganta (K)" },
+                    { display: "BO-LLO", tts: "bo, llo", cue: "suave sin explosión (B)" }
+                ],
+                valid: ["pollo", "poyo", "pollos", "poyos", "pollito", "polo", "poco"],
+                trapMatches: ["collo", "coyo", "tollo", "toyo", "bollo", "boyo", "gollo", "rollo", "hoyo", "gallo", "caballo"]
+            },
+            {
+                word: "polo", emoji: "🍧",
+                ttsCorrect: "polo",
+                traps: [
+                    { display: "TO-LO", tts: "to, lo", cue: "con los dientes (T)" },
+                    { display: "BO-LO", tts: "bo, lo", cue: "suave sin apretar (B)" }
+                ],
+                valid: ["polo", "polos", "polito", "poro", "podo", "poco"],
+                trapMatches: ["colo", "tolo", "bolo", "golo", "kolo", "solo", "dolo", "toro", "loro", "todo", "codo"]
+            },
+            {
+                word: "pavo", emoji: "🦃",
+                ttsCorrect: "pavo",
+                traps: [
+                    { display: "CA-BO", tts: "ca, bo", cue: "con la garganta (K)" },
+                    { display: "TA-BO", tts: "ta, bo", cue: "con los dientes (T)" }
+                ],
+                valid: ["pavo", "pabo", "pabos", "pavos", "pago"],
+                trapMatches: ["cabo", "cavo", "kabo", "tabo", "tavo", "babo", "vavo", "gabo", "rabo", "nabo"]
+            },
+            {
+                word: "perdiz", emoji: "🐦",
+                ttsCorrect: "perdiz",
+                traps: [
+                    { display: "TER-DIZ", tts: "ter, diz", cue: "con los dientes (T)" },
+                    { display: "CER-DIZ", tts: "cer, diz", cue: "con la lengua en los dientes (Z)" }
+                ],
+                valid: ["perdiz", "perdi", "perdis", "pediz", "pedi", "pedir"],
+                trapMatches: ["terdiz", "cerdiz", "kerdiz", "berdiz", "terdi", "cerdi", "verde", "tarde", "cerdo"]
+            }
+        ];
+
+        const shuffled = [...basePool].sort(() => Math.random() - 0.5);
+        // 5 trampas y 3 aciertos mezclados al azar en cada partida
+        const flags = [false, false, false, false, false, true, true, true].sort(() => Math.random() - 0.5);
+
+        hunterList = shuffled.map((item, idx) => {
+            const isCorrect = flags[idx];
+            const chosenTrapObj = item.traps[Math.floor(Math.random() * item.traps.length)];
+            const spokenTTS = isCorrect ? item.ttsCorrect : chosenTrapObj.tts;
+            const displayWord = isCorrect ? item.word.toUpperCase() : chosenTrapObj.display;
+
+            return {
+                word: item.word,
+                emoji: item.emoji,
+                dinoSpokenTTS: spokenTTS,
+                dinoDisplayWord: displayWord,
+                isDinoCorrect: isCorrect,
+                explanation: isCorrect
+                    ? `¡Exacto! Dino dijo ${item.word} juntando muy bien los dos labios.`
+                    : `¡Pillaste la trampa! Dino dijo ${chosenTrapObj.tts} ${chosenTrapObj.cue}.`,
+                validMatches: item.valid,
+                velarDentalTraps: item.trapMatches
+            };
+        });
+        starsByMode.hunter = new Array(hunterList.length).fill(false);
+    }
+
+    // MODO 5: Láminas Interactivas de Habla Espontánea ("¿Qué pasa en la foto?") - 5 palabras por lámina
+    const scenesList = [
+        {
+            title: "🏞️ Lámina 1: El Parque de Dino (5 palabras con P)",
+            prompt: "Mira la foto del parque. Tienes que decir las cinco palabras con P: PATO, PÁJARO, PINO, POLO y PELO.",
+            objects: [
+                {
+                    id: "pato", word: "pato", emoji: "🦆", label: "PATO", action: "en el agua",
+                    matches: ["pato", "patos", "patito", "patitos", "pacto", "parto", "paso", "palo", "paco"],
+                    traps: ["tato", "cato", "gato", "kato", "bato", "chato", "dato", "rato", "zapato", "plato"]
+                },
+                {
+                    id: "pajaro", word: "pájaro", emoji: "🐦", label: "PÁJARO", action: "volando",
+                    matches: ["pajaro", "pajarito", "pajaritos", "pajaros", "pajado", "pajalo", "paja", "pasaro", "pararo"],
+                    traps: ["cajaro", "cajarito", "cajaritos", "tajaro", "tajarito", "bajaro", "gajaro", "kajaro", "carro", "tarro", "caja"]
+                },
+                {
+                    id: "pino", word: "pino", emoji: "🌲", label: "PINO", action: "con la rana 🐸",
+                    matches: ["pino", "pinos", "pinito", "pimo", "piro", "pido", "pico", "piso", "pito"],
+                    traps: ["tino", "chino", "kino", "vino", "bino", "fino", "dino", "lino", "mino", "nino", "niño"]
+                },
+                {
+                    id: "polo", word: "polo", emoji: "🍧", label: "POLO", action: "de fresa",
+                    matches: ["polo", "polos", "polito", "poro", "podo", "poco", "poso", "pomo"],
+                    traps: ["colo", "tolo", "bolo", "golo", "kolo", "solo", "dolo", "toro", "loro", "todo", "codo"]
+                },
+                {
+                    id: "pelo", word: "pelo", emoji: "💇‍♂️", label: "PELO", action: "de Dino 🦖",
+                    matches: ["pelo", "pelos", "pelito", "pero", "pedo", "perro", "pego", "peso", "peco"],
+                    traps: ["telo", "celo", "kelo", "belo", "velo", "gelo", "hielo", "cielo", "suelo", "dedo", "cero"]
+                }
+            ]
+        },
+        {
+            title: "🏡 Lámina 2: La Fiesta de la Granja (5 palabras con P)",
+            prompt: "Mira la foto de la granja. Tienes que decir las cinco palabras con P: PAVO, POLLO, PERDIZ, PATO y PINO.",
+            objects: [
+                {
+                    id: "pavo", word: "pavo", emoji: "🦃", label: "PAVO", action: "bailando",
+                    matches: ["pavo", "pabo", "pabos", "pavos", "pago", "papo", "paro"],
+                    traps: ["cabo", "cavo", "kabo", "tabo", "tavo", "babo", "vavo", "gabo", "favo", "rabo", "nabo"]
+                },
+                {
+                    id: "pollo", word: "pollo", emoji: "🐥", label: "POLLO", action: "amarillo",
+                    matches: ["pollo", "poyo", "pollos", "poyos", "pollito", "pollitos", "poho", "pozo"],
+                    traps: ["collo", "coyo", "tollo", "toyo", "bollo", "boyo", "gollo", "rollo", "hoyo", "gallo", "callo", "tallo"]
+                },
+                {
+                    id: "perdiz", word: "perdiz", emoji: "🐦", label: "PERDIZ", action: "saltando",
+                    matches: ["perdiz", "perdi", "perdis", "pediz", "pedi", "perdices", "pedir", "perfil", "pernil"],
+                    traps: ["terdiz", "cerdiz", "kerdiz", "berdiz", "terdi", "cerdi", "cardiz", "verde", "tarde", "cerdo"]
+                },
+                {
+                    id: "pato", word: "pato", emoji: "🦆", label: "PATO", action: "saludando",
+                    matches: ["pato", "patos", "patito", "patitos", "pacto", "parto", "paso", "palo"],
+                    traps: ["tato", "cato", "gato", "kato", "bato", "chato", "dato", "rato", "zapato"]
+                },
+                {
+                    id: "pino", word: "pino", emoji: "🌲", label: "PINO", action: "verde alto",
+                    matches: ["pino", "pinos", "pinito", "pimo", "piro", "pido", "pico", "piso"],
+                    traps: ["tino", "chino", "kino", "vino", "bino", "fino", "dino", "nino", "niño"]
+                }
+            ]
+        }
+    ];
+
+    let currentMode = 'words';
     let currentIdx = 0;
-    let starsEarned = new Array(wordsList.length).fill(false);
+    let starsByMode = {
+        words: new Array(wordsList.length).fill(false),
+        detective: new Array(wordsList.length).fill(false),
+        sentences: new Array(sentencesList.length).fill(false),
+        hunter: new Array(8).fill(false),
+        scene: new Array(scenesList.length).fill(false)
+    };
+    let sceneFoundMap = {};
     let autoPlayMode = true;
     let isRunningCycle = false;
-    let chosenVoice = null;
 
-    // Audio & Mic Analyzer
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
     let micStream = null;
@@ -757,81 +1312,17 @@
     let volumeInterval = null;
     let peakMicVolume = 0;
 
-    // Reconocimiento de voz nativo (WebKit Speech Recognition para Safari/iPad y Chrome/Edge)
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognizer = null;
-    let recognitionActive = false;
+    let activeUtterance = null;
 
-    // 1. Selección inteligente de la voz más humana disponible (priorizando Microsoft Edge Online Natural y Apple Enhanced/Siri)
-    function loadBestSpanishVoices() {
-        if (!('speechSynthesis' in window)) return;
-        const allVoices = window.speechSynthesis.getVoices();
-        if (!allVoices || allVoices.length === 0) return;
-
-        const esVoices = allVoices.filter(v => v.lang.toLowerCase().startsWith('es'));
-        const selectEl = document.getElementById('voice-select');
-        selectEl.innerHTML = '';
-
-        const scoredVoices = esVoices.map(v => {
-            let score = 0;
-            const name = v.name.toLowerCase();
-            const lang = v.lang.toLowerCase();
-            if (lang.includes('es-es')) score += 25;
-            if (name.includes('natural') || name.includes('online')) score += 100;
-            if (name.includes('elvira') || name.includes('alvaro') || name.includes('dalia') || name.includes('jorge')) score += 60;
-            if (name.includes('premium') || name.includes('enhanced') || name.includes('mejorada') || name.includes('siri')) score += 80;
-            if (name.includes('mónica') || name.includes('monica') || name.includes('marisol') || name.includes('paulina')) score += 20;
-            if (name.includes('google')) score += 40;
-            return { voice: v, score };
-        }).sort((a, b) => b.score - a.score);
-
-        scoredVoices.forEach((item, idx) => {
-            const opt = document.createElement('option');
-            opt.value = item.voice.name;
-            opt.textContent = `${item.voice.name} (${item.voice.lang})`;
-            selectEl.appendChild(opt);
-            if (idx === 0 && !chosenVoice) {
-                chosenVoice = item.voice;
-            }
-        });
-
-        if (chosenVoice) {
-            selectEl.value = chosenVoice.name;
-            const shortName = chosenVoice.name.replace(/Microsoft |Apple |Online \(Natural\) |Google /g, '').split(' ')[0];
-            document.getElementById('current-voice-label').textContent = shortName;
-        }
+    function getActiveList() {
+        if (currentMode === 'sentences') return sentencesList;
+        if (currentMode === 'hunter') return hunterList;
+        if (currentMode === 'scene') return scenesList;
+        return wordsList;
     }
 
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.onvoiceschanged = loadBestSpanishVoices;
-    }
-
-    function changeSelectedVoice() {
-        const val = document.getElementById('voice-select').value;
-        const voices = window.speechSynthesis.getVoices();
-        chosenVoice = voices.find(v => v.name === val) || chosenVoice;
-        if (chosenVoice) {
-            const shortName = chosenVoice.name.replace(/Microsoft |Apple |Online \(Natural\) /g, '').split(' ')[0];
-            document.getElementById('current-voice-label').textContent = shortName;
-        }
-    }
-
-    function openVoiceModal() {
-        loadBestSpanishVoices();
-        document.getElementById('voice-modal').style.display = 'flex';
-    }
-
-    function closeVoiceModal() {
-        document.getElementById('voice-modal').style.display = 'none';
-    }
-
-    function testCurrentVoice() {
-        speakNatural("¡Hola Guillermo! Soy tu amigo Dino y vamos a jugar con las palabras mágicas.", 0.95);
-    }
-
-    // Control de micrófono para iPad PWA: En iOS/iPadOS, si el micrófono está abierto,
-    // el sistema baja el volumen del altavoz un 90% o silencia el sintetizador de voz (speechSynthesis).
-    // Por eso apagamos el micrófono mientras Dino habla y lo encendemos SOLO cuando le toca hablar a Guillermo.
     function stopMicrophoneTracks() {
         if (volumeInterval) {
             clearInterval(volumeInterval);
@@ -853,7 +1344,6 @@
 
     async function startMicrophoneForChildTurn() {
         try {
-            // En iOS 17+ si existe navigator.audioSession, usar play-and-record para que no baje el volumen
             if (navigator.audioSession) {
                 navigator.audioSession.type = 'play-and-record';
             }
@@ -878,28 +1368,23 @@
 
                 bars.forEach((bar, idx) => {
                     const factor = (idx + 1) / bars.length;
-                    const h = Math.min(32, Math.max(5, (avg * factor * 0.45)));
+                    const h = Math.min(26, Math.max(5, (avg * factor * 0.42)));
                     bar.style.height = h + 'px';
                     bar.style.background = avg > 30 ? '#06D6A0' : '#ADB5BD';
                 });
             }, 70);
         } catch (err) {
-            document.getElementById('mic-status-label').textContent = '🎙️ Toca para hablar';
+            document.getElementById('mic-status-label').textContent = '🎙️ Habla fuerte a Dino';
         }
     }
 
-    // 2. Síntesis de voz optimizada para iPad PWA (con fallback de Google TTS MP3 si iOS bloquea speechSynthesis)
-    let activeUtterance = null; // Evita que el recolector de basura de iOS corte la voz a mitad
-
     function speakNatural(text, rate = 0.9) {
         return new Promise(async (resolve) => {
-            // Asegurarnos de que el micrófono esté cerrado para que iPadOS saque el sonido por el altavoz principal a máximo volumen
             stopMicrophoneTracks();
 
             if (navigator.audioSession) {
                 navigator.audioSession.type = 'playback';
             }
-
             if (audioCtx && audioCtx.state === 'suspended') {
                 try { await audioCtx.resume(); } catch (e) {}
             }
@@ -925,9 +1410,6 @@
                 window.speechSynthesis.cancel();
                 window.speechSynthesis.resume();
 
-                // Recargar voces si iPadOS aún no las había inicializado
-                if (!chosenVoice) loadBestSpanishVoices();
-
                 const utter = new SpeechSynthesisUtterance(text);
                 activeUtterance = utter;
                 utter.lang = 'es-ES';
@@ -935,22 +1417,12 @@
                 utter.pitch = 1.05;
                 utter.volume = 1.0;
 
-                // En iPad PWA, asignar un objeto voice corrupto a veces silencia la locución; solo asignamos si es localService o seguro
-                if (chosenVoice) {
-                    utter.voice = chosenVoice;
-                }
-
-                utter.onend = () => {
-                    setTimeout(finish, 80);
-                };
-                utter.onerror = () => {
-                    finish();
-                };
+                utter.onend = () => setTimeout(finish, 80);
+                utter.onerror = () => finish();
 
                 window.speechSynthesis.speak(utter);
 
-                // Salvavidas por si iOS congela el evento onend
-                const estDuration = Math.max(1400, text.length * 115);
+                const estDuration = Math.max(1400, text.length * 105);
                 setTimeout(finish, estDuration);
             } catch (e) {
                 setTimeout(finish, 1000);
@@ -958,38 +1430,56 @@
         });
     }
 
-    // 4. Desbloqueo Síncrono Directo en el evento click para que iPadOS PWA autorice el audio al 100%
     function initializeAutonomousGame() {
-        // IMPORTANTE EN iOS/iPadOS: Desbloquear AudioContext y SpeechSynthesis de forma SÍNCRONA en la primera línea del click
         if (!audioCtx && AudioContextClass) {
             audioCtx = new AudioContextClass();
         }
         if (audioCtx && audioCtx.state === 'suspended') {
             audioCtx.resume();
         }
-
-        // Tono inmediato para abrir el canal de hardware de audio del iPad
         playTone('ding');
 
-        // Desbloquear SpeechSynthesis dentro del mismo evento de toque del usuario
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
             window.speechSynthesis.resume();
-            loadBestSpanishVoices();
         }
 
         document.getElementById('start-overlay').style.display = 'none';
 
-        // Hablar inmediatamente y pedir el permiso de micrófono una vez que termine el saludo
-        speakNatural("¡Hola Guillermo! Mira mis labios y repite después de mí.", 0.95).then(() => {
-            loadWordCard(0, true);
+        speakNatural("¡Hola Guillermo! Vamos a jugar con los cinco juegos mágicos de Dino.", 0.95).then(() => {
+            loadItemCard(0, true);
         });
+    }
+
+    function switchGameMode(newMode) {
+        stopMicrophoneTracks();
+        isRunningCycle = false;
+        currentMode = newMode;
+        currentIdx = 0;
+        if (newMode === 'hunter') {
+            generateRandomHunterList();
+        }
+
+        ['words', 'detective', 'sentences', 'hunter', 'scene'].forEach(m => {
+            document.getElementById(`tab-${m}`).classList.toggle('active-tab', m === newMode);
+        });
+
+        document.getElementById('view-words').style.display = newMode === 'words' ? 'block' : 'none';
+        document.getElementById('view-detective').style.display = newMode === 'detective' ? 'grid' : 'none';
+        document.getElementById('view-sentences').style.display = newMode === 'sentences' ? 'grid' : 'none';
+        document.getElementById('view-hunter').style.display = newMode === 'hunter' ? 'flex' : 'none';
+        document.getElementById('view-scene').style.display = newMode === 'scene' ? 'flex' : 'none';
+
+        document.getElementById('articulatory-sequence').style.display =
+            (newMode === 'words' || newMode === 'detective') ? 'flex' : 'none';
+
+        loadItemCard(0, true);
     }
 
     function renderTopStars() {
         const row = document.getElementById('stars-row');
         row.innerHTML = '';
-        starsEarned.forEach(won => {
+        starsByMode[currentMode].forEach(won => {
             const s = document.createElement('span');
             s.className = 'star-icon' + (won ? ' won' : '');
             s.textContent = '⭐';
@@ -1000,103 +1490,514 @@
     function renderBottomDock() {
         const dock = document.getElementById('words-dock');
         dock.innerHTML = '';
-        wordsList.forEach((item, idx) => {
+        const list = getActiveList();
+        const stars = starsByMode[currentMode];
+
+        list.forEach((item, idx) => {
             const el = document.createElement('div');
-            el.className = 'dock-item' + (idx === currentIdx ? ' current' : '') + (starsEarned[idx] ? ' completed' : '');
-            el.innerHTML = `<span>${item.emoji}</span> <span>${item.word.toUpperCase()}</span>`;
+            el.className = 'dock-item' + (idx === currentIdx ? ' current' : '') + (stars[idx] ? ' completed' : '');
+            if (currentMode === 'sentences') {
+                el.innerHTML = `<span>${item.wagons[0].emoji}${item.wagons[2].emoji}</span> <span>Frase ${idx + 1}</span>`;
+            } else if (currentMode === 'scene') {
+                el.innerHTML = `<span>🏞️</span> <span>Lámina ${idx + 1}</span>`;
+            } else {
+                el.innerHTML = `<span>${item.emoji}</span> <span>${item.word.toUpperCase()}</span>`;
+            }
             el.onclick = () => {
-                if (!isRunningCycle) loadWordCard(idx, autoPlayMode);
+                if (!isRunningCycle) loadItemCard(idx, autoPlayMode);
             };
             dock.appendChild(el);
         });
     }
 
-    function loadWordCard(index, autoStartNow = false) {
-        currentIdx = index;
-        const item = wordsList[currentIdx];
+    let activeSceneTargetId = null;
 
-        document.getElementById('picture-frame').textContent = item.emoji;
+    function updateSceneCounterBadge(sceneItem) {
+        const total = sceneItem.objects.length; // 5
+        const found = sceneItem.objects.filter(o => !!sceneFoundMap[o.id]).length;
+        const badge = document.getElementById('scene-counter-badge');
+        if (badge) {
+            badge.textContent = `🌟 ${found} / ${total} palabras`;
+            badge.style.background = found === total ? '#06D6A0' : '#6A4C93';
+        }
+    }
 
-        const sylRow = document.getElementById('syllable-row');
-        sylRow.innerHTML = '';
-        item.syllables.forEach((syl, i) => {
+    function renderSceneObjects(sceneItem) {
+        const box = document.getElementById('scene-canvas-box');
+        box.innerHTML = '';
+        document.getElementById('scene-title-bar').textContent = sceneItem.title;
+        updateSceneCounterBadge(sceneItem);
+
+        const firstPending = sceneItem.objects.find(o => !sceneFoundMap[o.id]);
+        if (!activeSceneTargetId || sceneFoundMap[activeSceneTargetId]) {
+            activeSceneTargetId = firstPending ? firstPending.id : null;
+        }
+
+        sceneItem.objects.forEach(obj => {
             const card = document.createElement('div');
-            card.className = 'syl-card' + (i === 0 ? ' initial-p' : '');
-            card.id = `syl-card-${i}`;
-            if (i === 0) {
-                card.innerHTML = `<span class="highlight-p">${syl[0]}</span>${syl.slice(1)}`;
-            } else {
-                card.textContent = syl;
-            }
-            sylRow.appendChild(card);
+            const isFound = !!sceneFoundMap[obj.id];
+            const isTarget = (!isFound && activeSceneTargetId === obj.id);
+            card.className = 'scene-hotspot' + (isFound ? ' found-object' : '') + (isTarget ? ' active-target-spot' : '');
+            card.id = `scene-obj-${obj.id}`;
+            card.innerHTML = `
+                <div class="hotspot-emoji">${obj.emoji}</div>
+                <div class="hotspot-label">${obj.label}</div>
+                <div class="hotspot-action-hint">${isFound ? '✅ ¡Muy bien!' : (isTarget ? '🎤 ¡Di este!' : obj.action)}</div>
+            `;
+            card.onclick = async () => {
+                if (isRunningCycle) return;
+                activeSceneTargetId = obj.id;
+                renderSceneObjects(sceneItem);
+                playTone('pop');
+                await speakNatural(`Di conmigo: ${obj.word}.`, 0.9);
+                listenToSceneStory(sceneItem);
+            };
+            box.appendChild(card);
         });
+    }
+
+    function loadItemCard(index, autoStartNow = false) {
+        currentIdx = index;
+        const list = getActiveList();
+        const item = list[currentIdx];
+
+        if (currentMode === 'words') {
+            document.getElementById('picture-frame').textContent = item.emoji;
+            document.getElementById('gest-2').textContent = item.c2Cue;
+
+            const sylRow = document.getElementById('syllable-row');
+            sylRow.innerHTML = '';
+            item.syllables.forEach((syl, i) => {
+                const card = document.createElement('div');
+                card.className = 'syl-card' + (i === 0 ? ' initial-p' : '');
+                card.id = `syl-card-${i}`;
+                if (i === 0) {
+                    card.innerHTML = `<span class="highlight-p">${syl[0]}</span>${syl.slice(1)}`;
+                } else {
+                    card.textContent = syl;
+                }
+                sylRow.appendChild(card);
+            });
+        } else if (currentMode === 'detective') {
+            document.getElementById('gest-2').textContent = item.c2Cue;
+            document.getElementById('pair-target-emoji').textContent = item.emoji;
+            document.getElementById('pair-target-word').textContent = item.word.toUpperCase();
+            document.getElementById('pair-foil-emoji').textContent = item.foilEmoji;
+            document.getElementById('pair-foil-word').textContent = item.foilWord;
+            document.getElementById('pair-foil-cue').textContent = item.foilCue;
+            document.getElementById('pair-right').classList.remove('heard-wrong-shake');
+        } else if (currentMode === 'sentences') {
+            item.wagons.forEach((w, i) => {
+                document.getElementById(`w-emoji-${i}`).textContent = w.emoji;
+                document.getElementById(`w-text-${i}`).textContent = w.text;
+                document.getElementById(`wagon-${i}`).classList.remove('lit-wagon');
+            });
+        } else if (currentMode === 'hunter') {
+            hunterSubState = 'judging';
+            document.getElementById('hunter-emoji').textContent = item.emoji;
+            document.getElementById('hunter-bubble').innerHTML = `👂 ¿Dino dice <strong>${item.word.toUpperCase()}</strong> o hace trampa?`;
+            document.getElementById('judge-buttons').style.display = 'flex';
+        } else if (currentMode === 'scene') {
+            sceneFoundMap = {};
+            activeSceneTargetId = item.objects[0].id;
+            renderSceneObjects(item);
+        }
 
         const recBox = document.getElementById('recognition-box');
         recBox.className = 'recognition-box';
-        document.getElementById('prompt-title').innerHTML = `👆 Toca el dibujo de <strong>${item.word.toUpperCase()}</strong>`;
-        document.getElementById('heard-bubble').textContent = `Empieza juntando los dos labios: ¡PPP!`;
+        document.getElementById('prompt-title').innerHTML = `👆 Toca para escuchar a Dino`;
+        document.getElementById('heard-bubble').textContent = `Recuerda juntar fuerte los dos labios en la P`;
         document.getElementById('timer-bar-wrap').style.display = 'none';
 
         renderTopStars();
         renderBottomDock();
 
         if (autoStartNow) {
-            setTimeout(() => runWordCycle(false), 450);
+            setTimeout(() => runCurrentModeCycle(false), 420);
         }
     }
 
-    // 5. Ciclo Completo: Dino pronuncia sílabas (con micrófono apagado para volumen máximo) -> Abre micrófono y escucha a Guillermo
-    async function runWordCycle(slowMode = false) {
+    // Botones "Escuchar" y "Despacito": si estamos en Profe Dino y ya había acertado el juicio (está en fase 'pronouncing'),
+    // solo repite el turno de hablar al micrófono sin reiniciar el juicio de Dino.
+    async function onRepeatButtonClick(slowMode) {
         if (isRunningCycle) return;
-        isRunningCycle = true;
-
-        stopMicrophoneTracks();
-
-        const item = wordsList[currentIdx];
-        const mouth = document.getElementById('mouth-anim');
-        const recBox = document.getElementById('recognition-box');
-
-        document.getElementById('btn-repeat').disabled = true;
-        document.getElementById('btn-slow').disabled = true;
-
-        recBox.className = 'recognition-box';
-        document.getElementById('prompt-title').innerHTML = `👂 <strong>¡Escucha a Dino y mira los labios!</strong>`;
-        document.getElementById('heard-bubble').textContent = `Junta los labios como en el dibujo...`;
-        document.getElementById('dino-speech').textContent = `¡Mira mis labios!`;
-
-        mouth.classList.add('animate-p');
-
-        // Pronunciar cada sílaba iluminándola
-        for (let i = 0; i < item.syllables.length; i++) {
-            const card = document.getElementById(`syl-card-${i}`);
-            card.classList.add('lit');
-            playTone('pop');
-            await speakNatural(item.ttsSyllables[i], slowMode ? 0.65 : 0.85);
-            await new Promise(r => setTimeout(r, slowMode ? 350 : 180));
-            card.classList.remove('lit');
+        if (currentMode === 'hunter' && hunterSubState === 'pronouncing') {
+            const item = hunterList[currentIdx];
+            await speakNatural(`Junta fuerte los dos labios y di: ${item.word}`, slowMode ? 0.78 : 0.92);
+            await listenAndEvaluateChild(item);
+        } else {
+            await runCurrentModeCycle(slowMode);
         }
-
-        // Pronunciar la palabra completa
-        await new Promise(r => setTimeout(r, 220));
-        item.syllables.forEach((_, i) => document.getElementById(`syl-card-${i}`).classList.add('lit'));
-        await speakNatural(item.word, slowMode ? 0.75 : 0.92);
-        item.syllables.forEach((_, i) => document.getElementById(`syl-card-${i}`).classList.remove('lit'));
-
-        // Abrir turno de escucha y evaluación de Guillermo
-        await listenAndEvaluateChild(item);
     }
 
-    // 6. Escuchar a Guillermo y Diagnosticar si dijo /P/ o si la confundió con /K/, /T/, /B/
-    function listenAndEvaluateChild(item) {
+    async function explainFoilCard() {
+        if (isRunningCycle) return;
+        const item = wordsList[currentIdx];
+        document.getElementById('pair-right').classList.add('heard-wrong-shake');
+        playTone('boing');
+        await speakNatural(`¡Cuidado! Ese no empieza con los labios juntos. Nosotros queremos decir ${item.word} juntando los labios.`, 0.92);
+        document.getElementById('pair-right').classList.remove('heard-wrong-shake');
+    }
+
+    // MODO 4: Cuando Guillermo juzga si Dino lo ha dicho bien o con trampa
+    async function handleJudgeChoice(guilleSaysOk) {
+        if (isRunningCycle) return;
+        const item = hunterList[currentIdx];
+        const recBox = document.getElementById('recognition-box');
+        const titleEl = document.getElementById('prompt-title');
+        const bubbleEl = document.getElementById('heard-bubble');
+
+        if (guilleSaysOk === item.isDinoCorrect) {
+            playTone('ding');
+            hunterSubState = 'pronouncing';
+            document.getElementById('judge-buttons').style.display = 'none';
+            document.getElementById('hunter-bubble').innerHTML = `🎯 ¡Acertaste! Dino dijo: <strong>"${item.dinoDisplayWord}"</strong>`;
+
+            if (item.isDinoCorrect) {
+                recBox.className = 'recognition-box correct-phoneme';
+                titleEl.innerHTML = `🌟 <strong>¡MUY BIEN, PROFE GUILLERMO!</strong>`;
+                bubbleEl.textContent = item.explanation;
+                await speakNatural(`${item.explanation} ¡Ahora dilo tú conmigo: ${item.word}!`, 0.92);
+                await listenAndEvaluateChild(item);
+            } else {
+                recBox.className = 'recognition-box correct-phoneme';
+                titleEl.innerHTML = `🚨 <strong>¡PILLASTE LA TRAMPA DE DINO!</strong>`;
+                bubbleEl.textContent = `¡Enséñale a Dino cómo se dice ${item.word.toUpperCase()} con los labios!`;
+                await speakNatural(`${item.explanation} ¡Enséñame tú al micrófono cómo se dice ${item.word} juntando los labios!`, 0.92);
+                await listenAndEvaluateChild(item);
+            }
+        } else {
+            playTone('boing');
+            recBox.className = 'recognition-box error-phoneme';
+            document.getElementById('hunter-bubble').innerHTML = `🦖 Escucha otra vez: <strong>"${item.dinoDisplayWord}"</strong>`;
+            if (!item.isDinoCorrect) {
+                titleEl.innerHTML = `😮 ¡Escucha bien! Dino no juntó los labios`;
+                bubbleEl.textContent = `Pulsa el botón ROJO de "¡TRAMPA!"`;
+                await speakNatural(`¡Escucha despacio Guillermo! He dicho: ${item.dinoSpokenTTS}. No he juntado los labios. ¡Toca el botón rojo de trampa!`, 0.85);
+            } else {
+                titleEl.innerHTML = `😊 ¡Esta vez Dino sí juntó los labios en <strong>${item.word.toUpperCase()}</strong>!`;
+                bubbleEl.textContent = `Pulsa el botón VERDE de "¡Lo dijo BIEN!"`;
+                await speakNatural(`¡Escucha otra vez! He dicho ${item.word} juntando los dos labios. Toca el botón verde.`, 0.88);
+            }
+        }
+    }
+
+    // Comprobador fonológico específico para cada objeto de la lámina (detecta las 5 palabras con precisión)
+    function checkWordMatchesSceneObject(spokenWord, obj, isCurrentlyFocused) {
+        const w = normalizeStr(spokenWord);
+        if (!w || w.length < 2) return false;
+
+        const normMatches = obj.matches.map(normalizeStr);
+        if (normMatches.includes(w)) return true;
+
+        const target = normalizeStr(obj.word);
+        if (w === target || w.includes(target)) return true;
+
+        if (obj.id === "pajaro" && (w.startsWith("pajar") || w.startsWith("paja") || w === "pajaro")) return true;
+        if (obj.id === "perdiz" && (w.startsWith("perd") || w.startsWith("pedi") || w.startsWith("perni"))) return true;
+        if (obj.id === "pollo" && (w.startsWith("poll") || w.startsWith("poy"))) return true;
+        if (obj.id === "polo" && (w === "polo" || w === "polos" || w === "poro" || w === "polito")) return true;
+        if (obj.id === "pato" && (w.startsWith("pat") || w === "paco" || w === "paso")) return true;
+        if (obj.id === "pino" && (w.startsWith("pin") || w === "pimo" || w === "pico" || w === "piso" || w === "pito")) return true;
+        if (obj.id === "pelo" && (w.startsWith("pel") || w === "pero" || w === "pedo" || w === "pego")) return true;
+        if (obj.id === "pavo" && (w.startsWith("pav") || w.startsWith("pab") || w === "pago" || w === "papo")) return true;
+
+        if (isCurrentlyFocused && w.length >= 3 && w.startsWith(target.slice(0, 2))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // MODO 5: Escucha interactiva para detectar las 5 palabras de la lámina una por una o seguidas
+    function listenToSceneStory(sceneItem) {
         return new Promise(async (resolve) => {
+            isRunningCycle = true;
+            document.getElementById('btn-repeat').disabled = true;
+            document.getElementById('btn-slow').disabled = true;
+
             const recBox = document.getElementById('recognition-box');
             const titleEl = document.getElementById('prompt-title');
             const bubbleEl = document.getElementById('heard-bubble');
             const barWrap = document.getElementById('timer-bar-wrap');
             const barFill = document.getElementById('timer-bar-fill');
 
+            const pendingList = sceneItem.objects.filter(o => !sceneFoundMap[o.id]);
+            if (pendingList.length > 0 && (!activeSceneTargetId || sceneFoundMap[activeSceneTargetId])) {
+                activeSceneTargetId = pendingList[0].id;
+            }
+            renderSceneObjects(sceneItem);
+
+            const focusedObj = sceneItem.objects.find(o => o.id === activeSceneTargetId) || pendingList[0];
+            const pendingNames = pendingList.map(o => o.label).join(', ');
+
             recBox.className = 'recognition-box listening';
-            titleEl.innerHTML = `🎤 <strong>¡HABLA TÚ AHORA, GUILLERMO!</strong> Di: <span style="color:#D62828;">¡${item.word.toUpperCase()}!</span>`;
+            titleEl.innerHTML = focusedObj
+                ? `🎤 <strong>¡DI EN VOZ ALTA: <span style="color:#D62828;">${focusedObj.label}</span>!</strong> (Faltan: ${pendingNames})`
+                : `🎤 <strong>¡Nombra los 5 dibujos con P!</strong>`;
+            bubbleEl.textContent = `👂 Escuchando... puedes decir "${focusedObj ? focusedObj.label : ''}" o varios seguidos`;
+            barWrap.style.display = 'block';
+            barFill.style.width = '0%';
+            peakMicVolume = 0;
+
+            await startMicrophoneForChildTurn();
+
+            let trapDetected = null;
+            let newlyFoundInThisTurn = 0;
+            let finishedEarly = false;
+
+            if (SpeechRecognition) {
+                try {
+                    if (recognizer) recognizer.abort();
+                    recognizer = new SpeechRecognition();
+                    recognizer.lang = 'es-ES';
+                    recognizer.continuous = true;
+                    recognizer.interimResults = true;
+                    recognizer.maxAlternatives = 5;
+
+                    recognizer.onresult = (event) => {
+                        if (finishedEarly) return;
+
+                        let allAlternativesText = [];
+                        let primaryDisplay = [];
+
+                        for (let i = 0; i < event.results.length; i++) {
+                            const res = event.results[i];
+                            if (res[0]) primaryDisplay.push(res[0].transcript.trim());
+                            for (let j = 0; j < res.length; j++) {
+                                allAlternativesText.push(res[j].transcript);
+                            }
+                        }
+
+                        const shownText = primaryDisplay.join(' ');
+                        if (shownText) {
+                            bubbleEl.innerHTML = `🗣️ Te he oído: <strong>"${shownText.toUpperCase()}"</strong>`;
+                        }
+
+                        const candidateWords = normalizeStr(allAlternativesText.join(' ')).split(/\s+/).filter(Boolean);
+                        const primaryWords = normalizeStr(shownText).split(/\s+/).filter(Boolean);
+
+                        // 1. Comprobar aciertos en los 5 objetos de la foto
+                        sceneItem.objects.forEach(obj => {
+                            if (!sceneFoundMap[obj.id]) {
+                                const isFocused = (obj.id === activeSceneTargetId);
+                                const hit = candidateWords.some(w => checkWordMatchesSceneObject(w, obj, isFocused));
+                                if (hit) {
+                                    sceneFoundMap[obj.id] = true;
+                                    newlyFoundInThisTurn++;
+                                    playTone('ding');
+
+                                    const nextPend = sceneItem.objects.find(o => !sceneFoundMap[o.id]);
+                                    activeSceneTargetId = nextPend ? nextPend.id : null;
+                                    renderSceneObjects(sceneItem);
+
+                                    if (nextPend) {
+                                        titleEl.innerHTML = `🌟 ¡Bien dicho <strong>${obj.label}</strong>! Ahora di: <span style="color:#D62828;">¡${nextPend.label}!</span>`;
+                                    }
+                                }
+                            }
+                        });
+
+                        // 2. Comprobar si cometió una trampa fonológica (/t/, /k/, /b/) de algún objeto aún no encontrado
+                        sceneItem.objects.forEach(obj => {
+                            if (!sceneFoundMap[obj.id]) {
+                                const normTraps = obj.traps.map(normalizeStr);
+                                const bad = primaryWords.find(w => normTraps.includes(w));
+                                if (bad) {
+                                    trapDetected = { wrong: bad, target: obj.word };
+                                }
+                            }
+                        });
+
+                        // 3. ¿Ya consiguió las 5 palabras completas?
+                        const totalFound = sceneItem.objects.filter(o => !!sceneFoundMap[o.id]).length;
+                        if (totalFound >= sceneItem.objects.length && !finishedEarly) {
+                            finishedEarly = true;
+                            clearInterval(timer);
+                            stopMicrophoneTracks();
+                            barWrap.style.display = 'none';
+                            document.getElementById('btn-repeat').disabled = false;
+                            document.getElementById('btn-slow').disabled = false;
+                            isRunningCycle = false;
+                            handleSuccess(false).then(resolve);
+                        }
+                    };
+                    recognizer.onerror = () => {};
+                    recognizer.start();
+                } catch (e) {}
+            }
+
+            const listenDuration = 8500;
+            const step = 70;
+            let elapsed = 0;
+
+            const timer = setInterval(async () => {
+                elapsed += step;
+                const pct = Math.min(100, (elapsed / listenDuration) * 100);
+                barFill.style.width = pct + '%';
+
+                if (elapsed >= listenDuration && !finishedEarly) {
+                    finishedEarly = true;
+                    clearInterval(timer);
+                    stopMicrophoneTracks();
+                    barWrap.style.display = 'none';
+                    document.getElementById('btn-repeat').disabled = false;
+                    document.getElementById('btn-slow').disabled = false;
+                    isRunningCycle = false;
+
+                    const totalFound = sceneItem.objects.filter(o => !!sceneFoundMap[o.id]).length;
+                    const remainingObjs = sceneItem.objects.filter(o => !sceneFoundMap[o.id]);
+
+                    if (totalFound >= sceneItem.objects.length) {
+                        await handleSuccess(false);
+                        resolve();
+                        return;
+                    }
+
+                    const nextTarget = remainingObjs[0];
+                    activeSceneTargetId = nextTarget.id;
+                    renderSceneObjects(sceneItem);
+
+                    if (trapDetected && newlyFoundInThisTurn === 0) {
+                        playTone('boing');
+                        recBox.className = 'recognition-box error-phoneme';
+                        titleEl.innerHTML = `😮 ¡Casi! Sonó <strong>"${trapDetected.wrong.toUpperCase()}"</strong> (llevas ${totalFound} de 5)`;
+                        bubbleEl.innerHTML = `👄 Junta fuerte los dos labios y di: <strong>¡${trapDetected.target.toUpperCase()}!</strong>`;
+                        await speakNatural(`¡Casi Guillermo! Sonó ${trapDetected.wrong}. Junta los dos labios y di: ${trapDetected.target}.`, 0.9);
+                        if (autoPlayMode) {
+                            setTimeout(() => listenToSceneStory(sceneItem), 600);
+                        }
+                    } else if (newlyFoundInThisTurn > 0) {
+                        recBox.className = 'recognition-box correct-phoneme';
+                        titleEl.innerHTML = `👏 ¡Muy bien! Ya llevas <strong>${totalFound} de 5</strong> palabras`;
+                        bubbleEl.innerHTML = `👉 Ahora di el siguiente dibujo iluminado: <strong>¡${nextTarget.label}!</strong>`;
+                        await speakNatural(`¡Genial! Ya llevas ${totalFound}. Ahora di: ${nextTarget.word}.`, 0.92);
+                        if (autoPlayMode) {
+                            setTimeout(() => listenToSceneStory(sceneItem), 500);
+                        }
+                    } else {
+                        recBox.className = 'recognition-box';
+                        titleEl.innerHTML = `🎤 Te faltan ${remainingObjs.length} palabras. ¡Di fuerte: <strong>${nextTarget.label}</strong>!`;
+                        bubbleEl.textContent = `Toca el dibujo de ${nextTarget.label} o habla al micrófono.`;
+                        await speakNatural(`Vamos Guillermo, mira el dibujo iluminado y di fuerte: ${nextTarget.word}.`, 0.92);
+                        if (autoPlayMode) {
+                            setTimeout(() => listenToSceneStory(sceneItem), 700);
+                        }
+                    }
+                    resolve();
+                }
+            }, step);
+        });
+    }
+
+    async function runCurrentModeCycle(slowMode = false) {
+        if (isRunningCycle) return;
+        isRunningCycle = true;
+        stopMicrophoneTracks();
+
+        document.getElementById('btn-repeat').disabled = true;
+        document.getElementById('btn-slow').disabled = true;
+
+        const mouth = document.getElementById('mouth-anim');
+        mouth.classList.add('animate-p');
+
+        if (currentMode === 'words') {
+            const item = wordsList[currentIdx];
+            document.getElementById('prompt-title').innerHTML = `👂 <strong>¡Escucha y mira el orden de tu boca!</strong>`;
+            document.getElementById('gest-1').classList.add('active-gesture');
+
+            for (let i = 0; i < item.syllables.length; i++) {
+                if (i === 1) {
+                    document.getElementById('gest-1').classList.remove('active-gesture');
+                    document.getElementById('gest-2').classList.add('active-gesture');
+                }
+                const card = document.getElementById(`syl-card-${i}`);
+                card.classList.add('lit');
+                playTone('pop');
+                await speakNatural(item.ttsSyllables[i], slowMode ? 0.65 : 0.85);
+                await new Promise(r => setTimeout(r, slowMode ? 340 : 170));
+                card.classList.remove('lit');
+            }
+            document.getElementById('gest-1').classList.remove('active-gesture');
+            document.getElementById('gest-2').classList.remove('active-gesture');
+
+            await new Promise(r => setTimeout(r, 180));
+            item.syllables.forEach((_, i) => document.getElementById(`syl-card-${i}`).classList.add('lit'));
+            await speakNatural(item.word, slowMode ? 0.75 : 0.92);
+            item.syllables.forEach((_, i) => document.getElementById(`syl-card-${i}`).classList.remove('lit'));
+
+            await listenAndEvaluateChild(item);
+
+        } else if (currentMode === 'detective') {
+            const item = wordsList[currentIdx];
+            document.getElementById('prompt-title').innerHTML = `🕵️‍♂️ <strong>¡Reto Detective!</strong> Di <strong>${item.word.toUpperCase()}</strong> con los labios`;
+            document.getElementById('gest-1').classList.add('active-gesture');
+            playTone('pop');
+            await speakNatural(`Di ${item.word}, juntando fuerte los dos labios.`, slowMode ? 0.8 : 0.92);
+            document.getElementById('gest-1').classList.remove('active-gesture');
+
+            await listenAndEvaluateChild(item);
+
+        } else if (currentMode === 'sentences') {
+            const item = sentencesList[currentIdx];
+            document.getElementById('prompt-title').innerHTML = `🚂 <strong>¡Sigue el ritmo del tren despacito!</strong>`;
+
+            for (let i = 0; i < item.wagons.length; i++) {
+                const wEl = document.getElementById(`wagon-${i}`);
+                wEl.classList.add('lit-wagon');
+                playTone('pop');
+                await speakNatural(item.wagons[i].tts, slowMode ? 0.72 : 0.88);
+                await new Promise(r => setTimeout(r, slowMode ? 320 : 150));
+                wEl.classList.remove('lit-wagon');
+            }
+
+            await listenAndEvaluateChild(item);
+
+        } else if (currentMode === 'hunter') {
+            const item = hunterList[currentIdx];
+            hunterSubState = 'judging';
+            document.getElementById('judge-buttons').style.display = 'flex';
+            document.getElementById('prompt-title').innerHTML = `🎓 <strong>¡Escucha a Dino! ¿Dijo ${item.word.toUpperCase()} o hizo trampa?</strong>`;
+            document.getElementById('heard-bubble').textContent = `Toca VERDE si dijo ${item.word.toUpperCase()} con P, o ROJO si se equivocó`;
+            playTone('pop');
+
+            // Si Dino hace trampa, NO animamos los labios de la P y pronunciamos las sílabas separadas despacio para que se note el error
+            if (item.isDinoCorrect) {
+                mouth.classList.add('animate-p');
+                document.getElementById('hunter-bubble').innerHTML = `🦖 Escucha cómo lo dice Dino...`;
+                await speakNatural(`Escucha cómo lo digo: ${item.dinoSpokenTTS}.`, slowMode ? 0.75 : 0.88);
+            } else {
+                mouth.classList.remove('animate-p');
+                document.getElementById('hunter-bubble').innerHTML = `🦖 Escucha con atención cómo suena...`;
+                await speakNatural(`Escucha cómo lo digo: ${item.dinoSpokenTTS}.`, 0.76);
+            }
+            document.getElementById('hunter-bubble').innerHTML = `🦖 Dino ha dicho: <strong>"¡${item.dinoDisplayWord}!"</strong>`;
+            mouth.classList.remove('animate-p');
+            document.getElementById('btn-repeat').disabled = false;
+            document.getElementById('btn-slow').disabled = false;
+            isRunningCycle = false;
+
+        } else if (currentMode === 'scene') {
+            const sceneItem = scenesList[currentIdx];
+            document.getElementById('prompt-title').innerHTML = `🏞️ <strong>¡Mira la foto y cuéntale tu historia a Dino!</strong>`;
+            await speakNatural(sceneItem.prompt, slowMode ? 0.84 : 0.93);
+            await listenToSceneStory(sceneItem);
+        }
+    }
+
+    function listenAndEvaluateChild(item) {
+        return new Promise(async (resolve) => {
+            isRunningCycle = true;
+            const recBox = document.getElementById('recognition-box');
+            const titleEl = document.getElementById('prompt-title');
+            const bubbleEl = document.getElementById('heard-bubble');
+            const barWrap = document.getElementById('timer-bar-wrap');
+            const barFill = document.getElementById('timer-bar-fill');
+
+            const labelTarget = currentMode === 'sentences' ? item.full.toUpperCase() : item.word.toUpperCase();
+
+            recBox.className = 'recognition-box listening';
+            titleEl.innerHTML = `🎤 <strong>¡TU TURNO, GUILLERMO!</strong> Di: <span style="color:#D62828;">¡${labelTarget}!</span>`;
             bubbleEl.textContent = `👂 Escuchando tu voz...`;
             document.getElementById('dino-speech').textContent = `¡Te escucho!`;
 
@@ -1104,42 +2005,69 @@
             barFill.style.width = '0%';
             peakMicVolume = 0;
 
-            document.getElementById('syl-card-0').classList.add('lit');
-
-            // Encender el medidor de micrófono solo ahora que Dino ya terminó de hablar
             await startMicrophoneForChildTurn();
 
             let recognizedTranscript = "";
             let allCandidates = [];
             let evaluated = false;
 
+            const listenDuration = currentMode === 'sentences' ? 6800 : 4800;
+            const step = 60;
+            let elapsed = 0;
+
             if (SpeechRecognition) {
                 try {
                     if (recognizer) recognizer.abort();
                     recognizer = new SpeechRecognition();
                     recognizer.lang = 'es-ES';
-                    recognizer.continuous = false;
+                    recognizer.continuous = (currentMode === 'sentences');
                     recognizer.interimResults = true;
                     recognizer.maxAlternatives = 5;
 
                     recognizer.onresult = (event) => {
-                        allCandidates = [];
-                        for (let i = 0; i < event.results.length; i++) {
-                            const res = event.results[i];
-                            for (let j = 0; j < res.length; j++) {
-                                allCandidates.push(res[j].transcript.toLowerCase().trim());
+                        if (evaluated) return;
+                        if (currentMode === 'sentences') {
+                            let fullPhraseParts = [];
+                            for (let i = 0; i < event.results.length; i++) {
+                                fullPhraseParts.push(event.results[i][0].transcript.toLowerCase().trim());
+                            }
+                            const combinedPhrase = fullPhraseParts.join(' ').trim();
+                            allCandidates = [combinedPhrase];
+                            recognizedTranscript = combinedPhrase;
+                        } else {
+                            // Ponemos primero la transcripción más reciente para evaluar lo último que ha dicho
+                            allCandidates = [];
+                            for (let i = event.results.length - 1; i >= 0; i--) {
+                                const res = event.results[i];
+                                for (let j = 0; j < res.length; j++) {
+                                    allCandidates.push(res[j].transcript.toLowerCase().trim());
+                                }
+                            }
+                            if (allCandidates.length > 0) {
+                                recognizedTranscript = allCandidates[0];
                             }
                         }
-                        if (allCandidates.length > 0) {
-                            recognizedTranscript = allCandidates[0];
+
+                        if (recognizedTranscript) {
                             bubbleEl.innerHTML = `🗣️ Te he oído decir: <strong>"${recognizedTranscript.toUpperCase()}"</strong>`;
 
-                            const verdict = analyzePhonology(item, allCandidates);
-                            if (verdict.status === 'correct' && !evaluated) {
-                                evaluated = true;
-                                clearInterval(timer);
-                                stopMicrophoneTracks();
-                                finalizeEvaluation(verdict, item, resolve);
+                            if (currentMode !== 'sentences') {
+                                const verdict = analyzePhonology(item, allCandidates, false);
+                                // Solo cerramos antes de tiempo si es un ACIERTO claro con /p/
+                                if (verdict.status === 'correct' && !evaluated) {
+                                    evaluated = true;
+                                    clearInterval(timer);
+                                    stopMicrophoneTracks();
+                                    finalizeEvaluation(verdict, item, resolve);
+                                }
+                            } else {
+                                const verdict = analyzePhonology(item, allCandidates, false);
+                                if (verdict.status === 'correct_full_sentence' && elapsed > 3800 && !evaluated) {
+                                    evaluated = true;
+                                    clearInterval(timer);
+                                    stopMicrophoneTracks();
+                                    finalizeEvaluation({ status: 'correct', heard: verdict.heard }, item, resolve);
+                                }
                             }
                         }
                     };
@@ -1149,20 +2077,16 @@
                 } catch (e) {}
             }
 
-            const listenDuration = 4800;
-            const step = 60;
-            let elapsed = 0;
-
             const timer = setInterval(() => {
                 elapsed += step;
                 const pct = Math.min(100, (elapsed / listenDuration) * 100);
                 barFill.style.width = pct + '%';
 
-                if (pct > 45) {
-                    document.getElementById('syl-card-0').classList.remove('lit');
-                    if (document.getElementById('syl-card-1')) {
-                        document.getElementById('syl-card-1').classList.add('lit');
-                    }
+                if (currentMode === 'sentences') {
+                    const wagonIdx = pct < 33 ? 0 : (pct < 66 ? 1 : 2);
+                    [0, 1, 2].forEach(idx => {
+                        document.getElementById(`wagon-${idx}`).classList.toggle('lit-wagon', idx === wagonIdx);
+                    });
                 }
 
                 if (elapsed >= listenDuration && !evaluated) {
@@ -1170,55 +2094,112 @@
                     clearInterval(timer);
                     stopMicrophoneTracks();
 
-                    const verdict = analyzePhonology(item, allCandidates);
+                    const verdict = analyzePhonology(item, allCandidates, true);
+                    if (verdict.status === 'correct_full_sentence') {
+                        verdict.status = 'correct';
+                    }
                     finalizeEvaluation(verdict, item, resolve);
                 }
             }, step);
         });
     }
 
-    function analyzePhonology(item, candidates) {
-        const joined = candidates.join(' ');
+    // MOTOR FONOLÓGICO ESTRICTO Y CORREGIDO:
+    // Ya NO regala por volumen si el niño dijo otra palabra distinta o se equivocó de fonema.
+    function analyzePhonology(item, candidates, isTimeUp = true) {
+        const normCandidates = candidates.map(normalizeStr).filter(Boolean);
+        const joined = normCandidates.join(' ');
+        const baseWord = normalizeStr(currentMode === 'sentences' ? item.firstWords[0] : item.word);
+        const targetPrefix2 = baseWord.slice(0, 2); // "pa", "po", "pe", "pi"
+        const ending = baseWord.slice(1);           // "ato", "avo", "ollo", "elo", "olo", "ajaro", "erdiz", "ino"
+        const tail2 = baseWord.slice(-2);           // últimas 2 letras ("to", "vo", "lo", "ro", "iz", "no")
 
-        for (const cand of candidates) {
-            const words = cand.split(/\s+/);
+        const validSet = (item.validMatches || []).map(normalizeStr);
+        const trapSet = (item.velarDentalTraps || []).map(normalizeStr);
+
+        // 1. MODO 3 (Tren de Frases)
+        if (currentMode === 'sentences') {
+            const allWords = joined.split(/\s+/).filter(Boolean);
+            // ¿Alguna palabra es una trampa dental/velar?
+            for (const w of allWords) {
+                if (trapSet.includes(w) || (w.endsWith(ending) && /^[ctkbgfdrlmn]/.test(w))) {
+                    return { status: 'confused_phoneme', heard: w };
+                }
+            }
+            const firstSet = item.firstWords.map(normalizeStr);
+            const endSet = item.endWords.map(normalizeStr);
+            const hasFirstP = allWords.some(w => firstSet.includes(w) || w.startsWith(targetPrefix2));
+            const hasEndWord = allWords.some(w => endSet.includes(w));
+
+            if (hasFirstP && (hasEndWord || allWords.length >= 4)) {
+                return { status: 'correct_full_sentence', heard: candidates[0] || item.full };
+            }
+            if (isTimeUp) {
+                if (hasFirstP && allWords.length >= 2) {
+                    return { status: 'correct', heard: candidates[0] || item.full };
+                }
+                if (allWords.length > 0 && !hasFirstP) {
+                    return { status: 'confused_phoneme', heard: candidates[0] };
+                }
+                return { status: 'silence', heard: '' };
+            }
+            return { status: 'in_progress', heard: joined };
+        }
+
+        // 2. MODOS 1, 2 y 4 (Palabras, Detective y Profe Dino):
+        // Primero comprobamos si en la alternativa principal dijo una trampa clara (/t/, /k/, /b/, /g/, /d/, /c/, /z/)
+        if (normCandidates.length > 0) {
+            const primaryWords = normCandidates[0].split(/\s+/).filter(Boolean);
+            for (const w of primaryWords) {
+                if (trapSet.includes(w)) {
+                    return { status: 'confused_phoneme', heard: w };
+                }
+                if ((w.endsWith(ending) || (w.length >= 3 && w.endsWith(tail2))) && /^[ctkbgfdrszjvlmn]/.test(w) && !w.startsWith('p')) {
+                    return { status: 'confused_phoneme', heard: w };
+                }
+            }
+        }
+
+        // Segundo: ¿Alguna de las palabras reconocidas es la palabra objetivo con P o empieza por la sílaba P+vocal?
+        for (const cand of normCandidates) {
+            const words = cand.split(/\s+/).filter(Boolean);
             for (const w of words) {
-                const clean = w.replace(/[.,¡!¿?]/g, '');
-                if (item.validMatches.includes(clean)) {
-                    return { status: 'correct', heard: clean };
+                if (validSet.includes(w) || w === baseWord) {
+                    return { status: 'correct', heard: w };
                 }
-                const targetPrefix = item.word.slice(0, 2).toLowerCase();
-                const targetPrefixNoAccent = targetPrefix.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                const cleanNoAccent = clean.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                if (cleanNoAccent.startsWith(targetPrefixNoAccent) && cleanNoAccent.length >= 3) {
-                    return { status: 'correct', heard: clean };
+                if (w.startsWith(targetPrefix2) && w.length >= 3) {
+                    return { status: 'correct', heard: w };
                 }
             }
         }
 
-        for (const cand of candidates) {
-            const words = cand.split(/\s+/);
+        // Tercero: ¿En cualquiera de los candidatos secundarios apareció una trampa?
+        for (const cand of normCandidates) {
+            const words = cand.split(/\s+/).filter(Boolean);
             for (const w of words) {
-                const clean = w.replace(/[.,¡!¿?]/g, '');
-                if (item.velarDentalTraps.includes(clean)) {
-                    return { status: 'confused_phoneme', heard: clean };
+                if (trapSet.includes(w)) {
+                    return { status: 'confused_phoneme', heard: w };
                 }
-                const ending = item.word.slice(1).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                const cleanNoAccent = clean.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                if (cleanNoAccent.endsWith(ending) && /^[ctkbgf]/.test(cleanNoAccent)) {
-                    return { status: 'confused_phoneme', heard: clean };
+                if (w.endsWith(ending) && !w.startsWith('p')) {
+                    return { status: 'confused_phoneme', heard: w };
                 }
             }
         }
 
-        if (candidates.length > 0) {
-            if (joined.trim().startsWith('p')) {
-                return { status: 'correct', heard: candidates[0] };
+        // Cuarto: Si el reconocedor de voz escuchó texto pero NO empieza por la sílaba con P (ej. dijo otra palabra o sustituyó la P)
+        if (normCandidates.length > 0) {
+            const firstCand = normCandidates[0];
+            const words = firstCand.split(/\s+/).filter(v => !['el', 'la', 'un', 'una', 'los', 'las', 'mi'].includes(v));
+            const mainSpoken = words[0] || firstCand;
+            if (!mainSpoken.startsWith('p')) {
+                return { status: 'confused_phoneme', heard: mainSpoken };
             }
-            return { status: 'confused_other', heard: candidates[0] };
+            return { status: 'correct', heard: mainSpoken };
         }
 
-        if (peakMicVolume > 32) {
+        // Quinto: Solo si el navegador NO devolvió ningún texto (por ejemplo, si el motor de Siri falló al transcribir una palabra corta),
+        // comprobamos si no existe SpeechRecognition. Si SpeechRecognition está activo y no captó nada, pedimos repetir.
+        if (!SpeechRecognition && peakMicVolume > 35) {
             return { status: 'voice_detected_ok', heard: item.word };
         }
 
@@ -1227,9 +2208,11 @@
 
     async function finalizeEvaluation(verdict, item, resolve) {
         stopMicrophoneTracks();
-        item.syllables.forEach((_, i) => document.getElementById(`syl-card-${i}`).classList.remove('lit'));
         document.getElementById('mouth-anim').classList.remove('animate-p');
         document.getElementById('timer-bar-wrap').style.display = 'none';
+        if (currentMode === 'sentences') {
+            [0, 1, 2].forEach(i => document.getElementById(`wagon-${i}`).classList.remove('lit-wagon'));
+        }
 
         const recBox = document.getElementById('recognition-box');
         const titleEl = document.getElementById('prompt-title');
@@ -1238,41 +2221,40 @@
         document.getElementById('btn-repeat').disabled = false;
         document.getElementById('btn-slow').disabled = false;
 
+        const targetLabel = currentMode === 'sentences' ? item.full : item.word;
+
         if (verdict.status === 'correct' || verdict.status === 'voice_detected_ok') {
             recBox.className = 'recognition-box correct-phoneme';
-            titleEl.innerHTML = `🌟 <strong>¡SÚPER BIEN, GUILLERMO!</strong> ¡Dijiste <strong>${item.word.toUpperCase()}</strong> con la P!`;
-            bubbleEl.innerHTML = `👏 ¡Juntaste los labios como un campeón!`;
+            titleEl.innerHTML = `🌟 <strong>¡SÚPER BIEN, GUILLERMO!</strong> ¡Dijiste <strong>${targetLabel.toUpperCase()}</strong> con la P!`;
+            bubbleEl.innerHTML = `👏 ¡Juntaste los dos labios como un campeón!`;
             isRunningCycle = false;
             await handleSuccess(false);
             resolve();
         } else if (verdict.status === 'confused_phoneme') {
             playTone('boing');
             recBox.className = 'recognition-box error-phoneme';
-            titleEl.innerHTML = `😮 ¡Casi! Sonó <strong>"${verdict.heard.toUpperCase()}"</strong>`;
-            bubbleEl.innerHTML = `👄 ¡Recuerda! No uses la garganta ni la lengua, <strong>junta los dos labios: ¡PPP - ${item.word.toUpperCase()}!</strong>`;
-            await speakNatural(`¡Casi Guillermo! Sonó ${verdict.heard}. Junta fuerte los dos labios y di: ${item.word}`, 0.9);
+            if (currentMode === 'detective') {
+                document.getElementById('pair-right').classList.add('heard-wrong-shake');
+            }
+            titleEl.innerHTML = `😮 ¡Casi! Sonó <strong>"${verdict.heard.toUpperCase()}"</strong> (sin juntar los labios)`;
+            bubbleEl.innerHTML = `👄 ¡Junta fuerte los dos labios al empezar: <strong>¡PPP - ${targetLabel.toUpperCase()}!</strong>`;
+            await speakNatural(`¡Casi Guillermo! Sonó ${verdict.heard}. Junta fuerte los dos labios al principio y di: ${targetLabel}`, 0.9);
             isRunningCycle = false;
             if (autoPlayMode) {
-                setTimeout(() => runWordCycle(true), 900);
+                if (currentMode === 'hunter') {
+                    // En modo Profe Dino repetimos SOLO la escucha de la pronunciación sin volver a preguntar qué dijo Dino
+                    setTimeout(() => listenAndEvaluateChild(item), 600);
+                } else {
+                    setTimeout(() => runCurrentModeCycle(true), 900);
+                }
             }
-            resolve();
-        } else if (verdict.status === 'silence') {
-            recBox.className = 'recognition-box';
-            titleEl.innerHTML = `🎤 ¡No te he oído! Di fuerte: <strong>¡${item.word.toUpperCase()}!</strong>`;
-            bubbleEl.innerHTML = `Toca "Escuchar" para intentarlo otra vez o la estrella verde si ya lo dijiste.`;
-            await speakNatural(`Anímate Guillermo, di fuerte ${item.word}`, 0.92);
-            isRunningCycle = false;
             resolve();
         } else {
-            playTone('boing');
-            recBox.className = 'recognition-box error-phoneme';
-            titleEl.innerHTML = `👂 He oído <strong>"${verdict.heard.toUpperCase()}"</strong>. ¡Probemos despacito!`;
-            bubbleEl.innerHTML = `Junta los dos labios al principio: <strong>${item.syllables.join(' - ')}</strong>`;
-            await speakNatural(`Vamos a decirlo despacito juntando los labios: ${item.word}`, 0.9);
+            recBox.className = 'recognition-box';
+            titleEl.innerHTML = `🎤 ¡No te he oído bien! Di fuerte: <strong>¡${targetLabel.toUpperCase()}!</strong>`;
+            bubbleEl.innerHTML = `Toca "Escuchar" para repetir o el botón verde si ya lo dijiste bien.`;
+            await speakNatural(`Anímate Guillermo, junta los labios y di fuerte ${targetLabel}`, 0.92);
             isRunningCycle = false;
-            if (autoPlayMode) {
-                setTimeout(() => runWordCycle(true), 800);
-            }
             resolve();
         }
     }
@@ -1282,53 +2264,82 @@
         if (manualClick && isRunningCycle) {
             isRunningCycle = false;
         }
+        // En el modo 5 (La Foto), si pulsa el botón manual "¡Lo dije bien!", validamos la palabra actual pendiente
+        // y solo damos por completada la lámina cuando las 5 palabras estén completadas.
+        if (manualClick && currentMode === 'scene') {
+            const sceneItem = scenesList[currentIdx];
+            const pendingObj = sceneItem.objects.find(o => o.id === activeSceneTargetId && !sceneFoundMap[o.id])
+                || sceneItem.objects.find(o => !sceneFoundMap[o.id]);
+            if (pendingObj) {
+                sceneFoundMap[pendingObj.id] = true;
+                playTone('ding');
+                const nextPend = sceneItem.objects.find(o => !sceneFoundMap[o.id]);
+                activeSceneTargetId = nextPend ? nextPend.id : null;
+                renderSceneObjects(sceneItem);
+                if (nextPend) {
+                    document.getElementById('btn-repeat').disabled = false;
+                    document.getElementById('btn-slow').disabled = false;
+                    await speakNatural(`¡Muy bien! Ahora di la siguiente palabra: ${nextPend.word}.`, 0.93);
+                    if (autoPlayMode) {
+                        setTimeout(() => listenToSceneStory(sceneItem), 500);
+                    }
+                    return;
+                }
+            }
+        }
         playTone('ding');
         fireConfetti();
-        starsEarned[currentIdx] = true;
+
+        const stars = starsByMode[currentMode];
+        stars[currentIdx] = true;
         renderTopStars();
         renderBottomDock();
 
-        const praises = [
-            `¡Muy bien Guillermo! ¡Has dicho ${wordsList[currentIdx].word} genial!`,
-            `¡Bravo campeón! ¡Qué bien juntas los labios en ${wordsList[currentIdx].word}!`,
-            `¡Estrella conseguida! ¡Excelente ${wordsList[currentIdx].word}!`
-        ];
-        const randomPraise = praises[ currentIdx % praises.length ];
-        await speakNatural(randomPraise, 0.95);
+        const list = getActiveList();
+        let spokenLabel = "";
+        if (currentMode === 'sentences') spokenLabel = list[currentIdx].targetWord;
+        else if (currentMode === 'scene') spokenLabel = "toda la historia de la foto";
+        else spokenLabel = list[currentIdx].word;
 
-        if (starsEarned.every(Boolean)) {
+        await speakNatural(`¡Muy bien Guillermo! ¡Qué bien te ha salido ${spokenLabel}!`, 0.95);
+
+        if (stars.every(Boolean)) {
             document.getElementById('win-modal').style.display = 'flex';
-            await speakNatural("¡Increíble Guillermo! Has conseguido las ocho estrellas tú solito. ¡Dino está súper orgulloso de ti!", 0.95);
+            await speakNatural("¡Increíble Guillermo! Has completado todas las estrellas de este juego.", 0.95);
             return;
         }
 
         if (autoPlayMode) {
-            const nextIdx = starsEarned.findIndex((done, i) => !done && i > currentIdx);
-            const fallbackIdx = starsEarned.findIndex(done => !done);
+            const nextIdx = stars.findIndex((done, i) => !done && i > currentIdx);
+            const fallbackIdx = stars.findIndex(done => !done);
             const target = nextIdx !== -1 ? nextIdx : fallbackIdx;
-            setTimeout(() => loadWordCard(target, true), 700);
+            setTimeout(() => loadItemCard(target, true), 650);
         }
+    }
+
+    function nextModeFromWin() {
+        document.getElementById('win-modal').style.display = 'none';
+        const order = ['words', 'detective', 'sentences', 'hunter', 'scene'];
+        const nextIdx = (order.indexOf(currentMode) + 1) % order.length;
+        switchGameMode(order[nextIdx]);
+    }
+
+    function restartCurrentMode() {
+        if (currentMode === 'hunter') {
+            generateRandomHunterList();
+        } else {
+            starsByMode[currentMode].fill(false);
+        }
+        document.getElementById('win-modal').style.display = 'none';
+        loadItemCard(0, true);
     }
 
     function toggleAutoPlay() {
         autoPlayMode = !autoPlayMode;
         const btn = document.getElementById('auto-toggle-btn');
-        if (autoPlayMode) {
-            btn.textContent = '🤖 Juego Solo: ACTIVADO';
-            btn.classList.add('active-mode');
-        } else {
-            btn.textContent = '🤖 Juego Solo: PAUSADO';
-            btn.classList.remove('active-mode');
-        }
+        btn.textContent = autoPlayMode ? '🤖 Juego Solo: ACTIVADO' : '🤖 Juego Solo: PAUSADO';
     }
 
-    function restartWholeGame() {
-        starsEarned.fill(false);
-        document.getElementById('win-modal').style.display = 'none';
-        loadWordCard(0, true);
-    }
-
-    // Efectos de sonido sintetizados
     function playTone(type) {
         try {
             if (!audioCtx && AudioContextClass) audioCtx = new AudioContextClass();
@@ -1374,7 +2385,6 @@
         } catch (e) {}
     }
 
-    // Confeti visual de recompensa
     function fireConfetti() {
         const canvas = document.getElementById('confetti-canvas');
         const ctx = canvas.getContext('2d');
@@ -1408,9 +2418,9 @@
     }
 
     window.onload = () => {
+        generateRandomHunterList();
         renderTopStars();
         renderBottomDock();
-        loadBestSpanishVoices();
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js').catch(() => {});
         }
